@@ -1,0 +1,9 @@
+User-agent: *
+Allow: /
+Disallow: /dashboard
+Disallow: /api/
+Disallow: /_next/
+Disallow: /static/
+Disallow: /signup
+
+Sitemap: https://www.risk-assessment.com.au/sitemap.xml

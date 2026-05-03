@@ -1,0 +1,64 @@
+import { createClient, createServiceRoleClient } from '@/lib/supabase/server'
+import { NextRequest, NextResponse } from 'next/server'
+import { calculateRiskScore, getRiskLevel } from '@/lib/risk-scoring'
+
+async function getTeamId(userId: string): Promise<string | null> {
+  const sr = await createServiceRoleClient()
+  const { data } = await (sr as any).from('team_members').select('team_id').eq('user_id', userId).limit(1).single()
+  return data?.team_id ?? null
+}
+
+export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  try {
+    const supabase = await createClient()
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+
+    const { id } = await params
+    const teamId = await getTeamId(user.id)
+    if (!teamId) return NextResponse.json({ error: 'Team not found' }, { status: 404 })
+
+    const sr = await createServiceRoleClient()
+    const { data, error } = await (sr as any).from('risks').select('*').eq('id', id).eq('team_id', teamId).single()
+    if (error || !data) return NextResponse.json({ error: 'Risk not found' }, { status: 404 })
+
+    return NextResponse.json(data)
+  } catch {
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
+  }
+}
+
+export async function PATCH(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  try {
+    const supabase = await createClient()
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+
+    const { id } = await params
+    const teamId = await getTeamId(user.id)
+    if (!teamId) return NextResponse.json({ error: 'Team not found' }, { status: 404 })
+
+    const body = await request.json()
+
+    // Recalculate score/level if likelihood or consequence changed
+    const updates: Record<string, unknown> = { ...body }
+    if (body.likelihood !== undefined || body.consequence !== undefined) {
+      const sr = await createServiceRoleClient()
+      const { data: existing } = await (sr as any).from('risks').select('likelihood,consequence').eq('id', id).single()
+      const likelihood = body.likelihood ?? existing?.likelihood
+      const consequence = body.consequence ?? existing?.consequence
+      if (likelihood && consequence) {
+        updates.risk_score = calculateRiskScore(likelihood, consequence)
+        updates.risk_level = getRiskLevel(updates.risk_score as number)
+      }
+    }
+
+    const sr = await createServiceRoleClient()
+    const { data, error } = await (sr as any).from('risks').update(updates).eq('id', id).eq('team_id', teamId).select().single()
+    if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+
+    return NextResponse.json(data)
+  } catch {
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
+  }
+}

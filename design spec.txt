@@ -1,0 +1,1521 @@
+Risk Assessment Design spec from Copilot:
+
+Here’s a clean, Claude‑friendly system design you can hand to Haiku → then Ollama.
+
+1. Project Overview
+Product: Risk Assessment web app for SMEs (e.g., WHS, operational, compliance risks).
+Goal: Let users create, score, track, and review risks and controls in a structured, auditable way.
+
+Core capabilities:
+
+Risk registers: Create and manage risk records per organisation/project.
+
+Risk scoring: Likelihood × consequence with configurable matrices.
+
+Controls & actions: Link controls and corrective actions to risks.
+
+Reviews & approvals: Periodic review workflow with status tracking.
+
+Audit trail: Track who changed what, and when.
+
+Reporting: Filterable lists, exports, and simple dashboards.
+
+2. Tech Stack
+Frontend:
+
+Framework: Next.js (App Router) + React
+
+UI: Tailwind CSS + Headless UI / Radix UI
+
+State: React Query (TanStack Query) for server state, minimal local state
+
+Forms: React Hook Form + Zod
+
+Backend:
+
+API: Next.js API routes (or Route Handlers)
+
+Auth: Supabase Auth (email/password + magic link)
+
+DB: Supabase Postgres
+
+ORM: Drizzle ORM or Supabase client with SQL
+
+Background tasks: Simple cron (Supabase scheduled functions) for review reminders
+
+Infra & tooling:
+
+Hosting: Vercel (frontend + API)
+
+DB & auth: Supabase
+
+Email: Supabase email or external provider (e.g., Resend) later
+
+Monitoring/logging: Vercel logs + Supabase logs
+
+3. Folder structure (tree format)
+text
+risk-assessment-app/
+  app/
+    layout.tsx
+    page.tsx                // Landing / marketing or dashboard redirect
+    dashboard/
+      page.tsx
+    risks/
+      page.tsx              // Risk list
+      new/
+        page.tsx
+      [riskId]/
+        page.tsx            // Risk detail
+        edit/
+          page.tsx
+    controls/
+      page.tsx
+    actions/
+      page.tsx
+    settings/
+      page.tsx
+    api/
+      auth/
+        callback/route.ts
+      risks/
+        route.ts            // POST, GET (list)
+      risks/[riskId]/
+        route.ts            // GET, PUT, DELETE
+      controls/
+        route.ts
+      actions/
+        route.ts
+      reviews/
+        route.ts
+  components/
+    layout/
+      AppShell.tsx
+      Sidebar.tsx
+      TopBar.tsx
+    risks/
+      RiskList.tsx
+      RiskTable.tsx
+      RiskForm.tsx
+      RiskDetailView.tsx
+      RiskScoreBadge.tsx
+    controls/
+      ControlList.tsx
+      ControlForm.tsx
+    actions/
+      ActionList.tsx
+      ActionForm.tsx
+    reviews/
+      ReviewList.tsx
+      ReviewForm.tsx
+    common/
+      Button.tsx
+      Input.tsx
+      Select.tsx
+      Modal.tsx
+      ConfirmDialog.tsx
+      Badge.tsx
+      Spinner.tsx
+      EmptyState.tsx
+  lib/
+    auth.ts                 // Supabase auth helpers
+    db.ts                   // DB client / ORM
+    validation/
+      riskSchemas.ts
+      controlSchemas.ts
+      actionSchemas.ts
+    risk/
+      scoring.ts            // risk score calculation
+      matrix.ts             // likelihood/consequence matrix
+  types/
+    risk.ts
+    control.ts
+    action.ts
+    review.ts
+  styles/
+    globals.css
+  .env.local
+  package.json
+  tsconfig.json
+4. API endpoints (with request/response schemas)
+All endpoints are authenticated; orgId is derived from user context (later multi‑tenant).
+
+POST /api/risks
+Purpose: Create a new risk.
+
+Request body:
+
+json
+{
+  "title": "Manual handling injuries",
+  "description": "Risk of musculoskeletal injuries from manual lifting.",
+  "category": "WHS",
+  "likelihood": 4,
+  "consequence": 3,
+  "inherentRiskScore": 12,
+  "residualRiskScore": 8,
+  "ownerId": "uuid-of-user",
+  "status": "open"
+}
+Response:
+
+json
+{
+  "id": "uuid",
+  "createdAt": "2026-04-06T10:00:00Z"
+}
+GET /api/risks?status=open&search=manual
+Purpose: List risks with filters.
+
+Response:
+
+json
+[
+  {
+    "id": "uuid",
+    "title": "Manual handling injuries",
+    "category": "WHS",
+    "likelihood": 4,
+    "consequence": 3,
+    "inherentRiskScore": 12,
+    "residualRiskScore": 8,
+    "status": "open",
+    "owner": { "id": "uuid", "name": "Jane Doe" },
+    "nextReviewDate": "2026-07-01"
+  }
+]
+GET /api/risks/:riskId
+Purpose: Get full risk detail.
+
+Response:
+
+json
+{
+  "id": "uuid",
+  "title": "Manual handling injuries",
+  "description": "Risk of musculoskeletal injuries from manual lifting.",
+  "category": "WHS",
+  "likelihood": 4,
+  "consequence": 3,
+  "inherentRiskScore": 12,
+  "residualRiskScore": 8,
+  "residualRiskScore": 8,
+  "status": "open",
+  "ownerId": "uuid",
+  "controls": [
+    { "id": "uuid", "name": "Manual handling training", "type": "administrative" }
+  ],
+  "actions": [
+    { "id": "uuid", "title": "Introduce lifting aids", "status": "in-progress", "dueDate": "2026-05-01" }
+  ],
+  "reviews": [
+    { "id": "uuid", "reviewDate": "2026-01-01", "reviewerId": "uuid", "notes": "Risk remains medium." }
+  ],
+  "createdAt": "2026-01-01T00:00:00Z",
+  "updatedAt": "2026-03-01T00:00:00Z"
+}
+PUT /api/risks/:riskId
+Purpose: Update risk fields (partial).
+
+Request body (example):
+
+json
+{
+  "likelihood": 3,
+  "consequence": 3,
+  "residualRiskScore": 9,
+  "status": "under-review"
+}
+Response: 200 OK with updated risk object.
+
+DELETE /api/risks/:riskId
+Soft delete (mark as archived).
+
+POST /api/controls
+Linkable controls.
+
+json
+{
+  "name": "Manual handling training",
+  "description": "Annual training for all staff.",
+  "type": "administrative",
+  "riskId": "uuid"
+}
+POST /api/actions
+Corrective actions.
+
+json
+{
+  "title": "Introduce lifting aids",
+  "description": "Purchase and deploy trolleys and lifting devices.",
+  "riskId": "uuid",
+  "assigneeId": "uuid",
+  "dueDate": "2026-05-01",
+  "status": "open"
+}
+POST /api/reviews
+json
+{
+  "riskId": "uuid",
+  "reviewDate": "2026-07-01",
+  "reviewerId": "uuid",
+  "notes": "Risk reduced after controls implemented.",
+  "likelihood": 2,
+  "consequence": 3,
+  "residualRiskScore": 6
+}
+5. Database schema (tables + fields)
+organisations
+id (uuid, pk)
+
+name (text)
+
+created_at (timestamptz)
+
+users
+id (uuid, pk) – from Supabase auth
+
+org_id (uuid, fk → organisations.id)
+
+name (text)
+
+email (text)
+
+role (text: admin, manager, viewer)
+
+created_at (timestamptz)
+
+risks
+id (uuid, pk)
+
+org_id (uuid, fk)
+
+title (text)
+
+description (text)
+
+category (text)
+
+likelihood (int)
+
+consequence (int)
+
+inherent_risk_score (int)
+
+residual_risk_score (int)
+
+status (text: open, under-review, closed, archived)
+
+owner_id (uuid, fk → users.id)
+
+next_review_date (date, nullable)
+
+created_at (timestamptz)
+
+updated_at (timestamptz)
+
+archived_at (timestamptz, nullable)
+
+controls
+id (uuid, pk)
+
+org_id (uuid, fk)
+
+risk_id (uuid, fk → risks.id)
+
+name (text)
+
+description (text)
+
+type (text: engineering, administrative, PPE, other)
+
+effectiveness_rating (int, nullable)
+
+created_at (timestamptz)
+
+actions
+id (uuid, pk)
+
+org_id (uuid, fk)
+
+risk_id (uuid, fk → risks.id)
+
+title (text)
+
+description (text)
+
+assignee_id (uuid, fk → users.id)
+
+due_date (date)
+
+status (text: open, in-progress, completed, overdue)
+
+created_at (timestamptz)
+
+completed_at (timestamptz, nullable)
+
+reviews
+id (uuid, pk)
+
+org_id (uuid, fk)
+
+risk_id (uuid, fk → risks.id)
+
+reviewer_id (uuid, fk → users.id)
+
+review_date (date)
+
+notes (text)
+
+likelihood (int)
+
+consequence (int)
+
+residual_risk_score (int)
+
+created_at (timestamptz)
+
+audit_logs
+id (uuid, pk)
+
+org_id (uuid, fk)
+
+user_id (uuid, fk)
+
+entity_type (text: risk, control, action, review)
+
+entity_id (uuid)
+
+action (text: create, update, delete)
+
+changes (jsonb)
+
+created_at (timestamptz)
+
+6. Component hierarchy
+Layout
+AppShell
+
+Sidebar
+
+TopBar
+
+MainContent
+
+Dashboard
+DashboardPage
+
+RiskSummaryCards
+
+RiskByStatusChart
+
+UpcomingReviewsList
+
+Risks
+RiskListPage
+
+RiskFilters
+
+RiskTable
+
+RiskRow
+
+RiskScoreBadge
+
+StatusBadge
+
+NewRiskButton
+
+RiskDetailPage
+
+RiskHeader
+
+RiskScorePanel
+
+RiskMetaPanel (owner, category, status)
+
+ControlsSection
+
+ControlList
+
+ControlFormModal
+
+ActionsSection
+
+ActionList
+
+ActionFormModal
+
+ReviewsSection
+
+ReviewList
+
+ReviewFormModal
+
+ActivityTimeline (from audit_logs later)
+
+RiskForm
+
+TextInput (title)
+
+Textarea (description)
+
+Select (category)
+
+Select (likelihood, consequence)
+
+ComputedScoreDisplay
+
+OwnerSelect
+
+StatusSelect
+
+SubmitButton
+
+Controls
+ControlListPage
+
+ControlForm
+
+Actions
+ActionListPage
+
+ActionForm
+
+Reviews
+ReviewListPage
+
+ReviewForm
+
+Common
+Button, Input, Select, Modal, ConfirmDialog, Badge, Spinner, EmptyState, Pagination
+
+7. Data flow
+Auth & org context
+
+User logs in via Supabase.
+
+Frontend retrieves user + org context and stores in React Query / context.
+
+All API calls include a session; backend derives userId and orgId.
+
+Risk listing
+
+Frontend calls GET /api/risks?filters....
+
+Backend queries risks filtered by org_id and returns list.
+
+React Query caches results; UI renders RiskTable.
+
+Risk creation
+
+User opens RiskForm, fills fields.
+
+Frontend validates with Zod, then calls POST /api/risks.
+
+Backend inserts into risks, writes audit_logs, returns new id.
+
+Frontend invalidates risks query and redirects to detail page.
+
+Linking controls/actions
+
+From RiskDetailPage, user adds control/action.
+
+Frontend calls POST /api/controls or /api/actions.
+
+Backend inserts row, returns updated list or triggers re-fetch.
+
+Reviews
+
+User records a review via POST /api/reviews.
+
+Backend inserts review, updates risks.residual_risk_score, likelihood, consequence, next_review_date.
+
+Frontend re-fetches risk detail.
+
+Audit trail
+
+Every create/update/delete writes to audit_logs.
+
+Later, ActivityTimeline reads from audit_logs for a risk.
+
+8. Error handling strategy
+Frontend:
+
+Form validation: Zod schemas; show inline errors per field.
+
+API errors: Centralised error handler:
+
+400 → show validation message
+
+401 → redirect to login
+
+403 → “You don’t have permission”
+
+500 → generic “Something went wrong”
+
+Toasts: For success/failure of mutations.
+
+Backend:
+
+Validate all inputs with shared schemas.
+
+Wrap handlers in try/catch; log errors with correlation id.
+
+Return structured error responses:
+
+json
+{
+  "error": {
+    "code": "VALIDATION_ERROR",
+    "message": "Likelihood must be between 1 and 5",
+    "details": { "field": "likelihood" }
+  }
+}
+Use transactions when updating multiple tables (e.g., review + risk).
+
+9. Security considerations
+Auth: Supabase JWT; all API routes verify session.
+
+Authorisation: Enforce org_id scoping on every query; user can only access data for their org.
+
+RBAC: role field on users:
+
+admin: manage org, users, all risks
+
+manager: manage risks, controls, actions
+
+viewer: read‑only
+
+Input sanitisation: Use parameterised queries via ORM; no string interpolation.
+
+Rate limiting: Basic rate limiting on auth and write endpoints (later).
+
+Audit logging: All changes recorded in audit_logs.
+
+Secrets: Store Supabase keys, JWT secrets in environment variables (Vercel/Supabase).
+
+10. Step‑by‑step build plan
+Bootstrap project
+
+Create Next.js app with TypeScript, Tailwind.
+
+Configure Supabase client and auth.
+
+Set up DB schema
+
+Create organisations, users, risks, controls, actions, reviews, audit_logs.
+
+Seed a demo org and user.
+
+Implement auth & org context
+
+Login/logout flow.
+
+Fetch current user + org.
+
+Protect /dashboard and subroutes.
+
+Build layout & navigation
+
+AppShell, Sidebar, TopBar.
+
+Routes: /dashboard, /risks, /controls, /actions, /settings.
+
+Implement risk listing
+
+GET /api/risks endpoint.
+
+RiskListPage with filters and table.
+
+Implement risk creation & editing
+
+Zod schemas + RiskForm.
+
+POST /api/risks, PUT /api/risks/:riskId.
+
+Redirect to detail page after create.
+
+Implement risk detail view
+
+GET /api/risks/:riskId.
+
+RiskDetailPage with score, metadata, controls, actions, reviews.
+
+Implement controls & actions
+
+POST /api/controls, POST /api/actions.
+
+Inline forms on risk detail.
+
+Separate list pages later.
+
+Implement reviews
+
+POST /api/reviews.
+
+Update risk scores and next review date.
+
+Show review history on risk detail.
+
+Add audit logging
+
+Middleware/helper to write audit_logs on create/update/delete.
+
+Simple ActivityTimeline on risk detail.
+
+Polish & harden
+
+Error handling, toasts, loading states.
+
+Role‑based UI (hide actions for viewers).
+
+Basic reporting on dashboard.
+
+
+
+Design spec from Claude Code Sonnet 4.6:
+Now I have a comprehensive picture of your entire ecosystem. Here's the system design for RiskAssessment:
+
+  ---
+  Risk Assessment — System Design
+
+  Overview
+
+  A SaaS compliance product that enables organizations to identify, analyze, and manage risks across legal, operational,
+   WHS, AML/CTF, and privacy domains — consistent with your Shield/CompliAI product suite.
+
+  ---
+  Tech Stack (Aligned with Your Ecosystem)
+
+  ┌────────────┬────────────────────────────┬────────────────────────────────────────────────────┐
+  │   Layer    │           Choice           │                     Rationale                      │
+  ├────────────┼────────────────────────────┼────────────────────────────────────────────────────┤
+  │ Framework  │ Next.js 16.x, App Router   │ Matches WHSShield, AMLShieldPro, PolicyWriter      │
+  ├────────────┼────────────────────────────┼────────────────────────────────────────────────────┤
+  │ Frontend   │ React 19.x, TypeScript 5.x │ Latest, consistent with newer apps                 │
+  ├────────────┼────────────────────────────┼────────────────────────────────────────────────────┤
+  │ Styling    │ Tailwind CSS 4.x           │ Matches WHSShield, AMLShieldPro                    │
+  ├────────────┼────────────────────────────┼────────────────────────────────────────────────────┤
+  │ Database   │ Supabase (PostgreSQL)      │ Consistent SSR pattern across all apps             │
+  ├────────────┼────────────────────────────┼────────────────────────────────────────────────────┤
+  │ Auth       │ Supabase Auth + Middleware │ Identical pattern to all apps                      │
+  ├────────────┼────────────────────────────┼────────────────────────────────────────────────────┤
+  │ AI         │ @anthropic-ai/sdk 0.80.x   │ Latest, matches WHSShield/AMLShieldPro             │
+  ├────────────┼────────────────────────────┼────────────────────────────────────────────────────┤
+  │ Payments   │ Stripe                     │ Same tiered subscription model                     │
+  ├────────────┼────────────────────────────┼────────────────────────────────────────────────────┤
+  │ Email      │ Resend                     │ Consistent with all apps                           │
+  ├────────────┼────────────────────────────┼────────────────────────────────────────────────────┤
+  │ Documents  │ DOCX + jsPDF               │ Risk report exports                                │
+  ├────────────┼────────────────────────────┼────────────────────────────────────────────────────┤
+  │ Forms      │ React Hook Form + Zod      │ Matches PolicyWriter                               │
+  ├────────────┼────────────────────────────┼────────────────────────────────────────────────────┤
+  │ Rich Text  │ TipTap                     │ For risk notes/recommendations (from PolicyWriter) │
+  ├────────────┼────────────────────────────┼────────────────────────────────────────────────────┤
+  │ Bundler    │ Turbopack                  │ Matches PolicyWriter                               │
+  ├────────────┼────────────────────────────┼────────────────────────────────────────────────────┤
+  │ Deployment │ Vercel + Cron Jobs         │ Consistent across all apps                         │
+  └────────────┴────────────────────────────┴────────────────────────────────────────────────────┘
+
+  ---
+  File Structure
+
+  riskassessment/
+  ├── app/
+  │   ├── (auth)/
+  │   │   ├── login/
+  │   │   ├── signup/
+  │   │   └── layout.tsx
+  │   ├── (dashboard)/
+  │   │   ├── layout.tsx
+  │   │   ├── page.tsx                    # Risk dashboard overview
+  │   │   ├── assessments/
+  │   │   │   ├── page.tsx                # All assessments list
+  │   │   │   ├── new/page.tsx            # Create assessment wizard
+  │   │   │   └── [id]/
+  │   │   │       ├── page.tsx            # Assessment detail
+  │   │   │       ├── risks/page.tsx      # Risk register
+  │   │   │       ├── controls/page.tsx   # Control mapping
+  │   │   │       └── report/page.tsx     # Generate report
+  │   │   ├── risk-register/page.tsx      # Global risk register
+  │   │   ├── templates/page.tsx          # Assessment templates
+  │   │   ├── settings/page.tsx
+  │   │   └── billing/page.tsx
+  │   ├── api/
+  │   │   ├── auth/callback/route.ts
+  │   │   ├── stripe/
+  │   │   │   ├── webhook/route.ts
+  │   │   │   └── checkout/route.ts
+  │   │   ├── cron/
+  │   │   │   ├── review-reminders/route.ts
+  │   │   │   ├── supabase-keepalive/route.ts
+  │   │   │   └── risk-alerts/route.ts
+  │   │   ├── assessments/
+  │   │   │   ├── route.ts                # CRUD
+  │   │   │   ├── [id]/route.ts
+  │   │   │   └── [id]/generate/route.ts  # Claude AI generation
+  │   │   ├── risks/
+  │   │   │   ├── route.ts
+  │   │   │   └── [id]/route.ts
+  │   │   ├── controls/
+  │   │   │   └── route.ts
+  │   │   └── reports/
+  │   │       └── [id]/route.ts           # PDF/DOCX export
+  │   ├── layout.tsx
+  │   ├── page.tsx                        # Marketing/landing
+  │   └── globals.css
+  ├── components/
+  │   ├── dashboard/
+  │   │   ├── RiskHeatmap.tsx             # Visual risk matrix
+  │   │   ├── RiskSummaryCards.tsx
+  │   │   └── RecentAssessments.tsx
+  │   ├── assessments/
+  │   │   ├── AssessmentWizard.tsx        # Multi-step creation
+  │   │   ├── AssessmentCard.tsx
+  │   │   └── RiskForm.tsx
+  │   ├── risks/
+  │   │   ├── RiskRegisterTable.tsx
+  │   │   ├── RiskScoreTag.tsx            # Likelihood × Consequence
+  │   │   └── RiskEditor.tsx              # TipTap for notes
+  │   ├── controls/
+  │   │   └── ControlMatrix.tsx
+  │   ├── billing/
+  │   ├── settings/
+  │   └── ui/                             # Shared primitives
+  ├── lib/
+  │   ├── anthropic.ts                    # Claude client + prompts
+  │   ├── risk-prompts.ts                 # Domain-specific AI prompts
+  │   ├── resend.ts                       # Email templates
+  │   ├── stripe.ts
+  │   ├── docx-utils.ts                   # Report export
+  │   ├── risk-scoring.ts                 # Likelihood × Consequence matrix
+  │   ├── shield-client.ts                # Cross-shield integration
+  │   ├── supabase/
+  │   │   ├── client.ts
+  │   │   ├── server.ts
+  │   │   └── middleware.ts
+  │   └── types.ts
+  ├── supabase/
+  │   └── migrations/
+  │       ├── 001_initial_schema.sql
+  │       ├── 002_team_invites.sql
+  │       ├── 003_assessments.sql
+  │       ├── 004_risk_register.sql
+  │       ├── 005_controls.sql
+  │       ├── 006_templates.sql
+  │       ├── 007_audit_log.sql
+  │       └── 008_notifications.sql
+  ├── middleware.ts
+  ├── next.config.ts
+  ├── tailwind.config.ts
+  ├── vercel.json
+  ├── .env.example
+  └── package.json
+
+  ---
+  Database Schema
+
+  Core Tables
+
+  -- Profiles (extends Supabase auth.users)
+  profiles (id, email, full_name, organization, role, created_at)
+
+  -- Teams
+  teams (id, name, owner_id, subscription_tier, created_at)
+  team_members (id, team_id, user_id, role, invited_at, joined_at)
+
+  -- Subscriptions
+  subscriptions (id, team_id, stripe_customer_id, stripe_subscription_id,
+                 status, plan, current_period_end)
+
+  -- Risk Assessments
+  assessments (
+    id, team_id, created_by,
+    title, description, domain,     -- domain: whs|aml|privacy|fairwork|general
+    status,                          -- draft|in_progress|completed|archived
+    assessment_date, review_date,
+    created_at, updated_at
+  )
+
+  -- Risk Register
+  risks (
+    id, assessment_id, team_id,
+    title, description, category,   -- operational|financial|legal|reputational
+    likelihood,                      -- 1-5
+    consequence,                     -- 1-5
+    risk_score,                      -- computed: likelihood × consequence
+    risk_level,                      -- low|medium|high|critical (derived)
+    owner, due_date,
+    status,                          -- identified|assessed|treated|accepted|closed
+    ai_generated,                    -- boolean
+    notes,                           -- TipTap JSON
+    created_at, updated_at
+  )
+
+  -- Controls
+  controls (
+    id, risk_id, team_id,
+    title, description, type,        -- preventive|detective|corrective
+    effectiveness,                   -- 1-5
+    owner, implementation_date,
+    status,                          -- planned|implemented|verified
+    created_at
+  )
+
+  -- Templates
+  assessment_templates (
+    id, team_id, name, domain,
+    template_data,                   -- JSONB: pre-populated risk categories
+    is_system_template,              -- built-in vs user-created
+    created_at
+  )
+
+  -- Audit Log
+  audit_log (id, team_id, user_id, action, entity_type, entity_id,
+             changes, created_at)
+
+  Risk Level Matrix (5×5)
+
+  Score 1-4:   LOW
+  Score 5-9:   MEDIUM
+  Score 10-14: HIGH
+  Score 15-25: CRITICAL
+
+  ---
+  AI Integration (Claude)
+
+  lib/risk-prompts.ts — Domain-Specific Prompts
+
+  // Risk identification per domain
+  export const RISK_PROMPTS = {
+    whs: `Analyze the workplace and identify WHS risks under the Work Health and Safety Act...`,
+    aml: `Identify AML/CTF risks under AUSTRAC obligations for the described business...`,
+    privacy: `Assess privacy risks under the Australian Privacy Act 1988...`,
+    fairwork: `Identify Fair Work Act compliance risks including award obligations...`,
+    general: `Conduct a comprehensive operational risk assessment...`
+  }
+
+  // Control suggestions
+  export const CONTROL_PROMPTS = {
+    generateControls: (risk: Risk) => `For this risk: "${risk.title}" with score ${risk.risk_score}, suggest 3-5
+  specific controls...`
+  }
+
+  Generation Flow
+
+  User inputs assessment context
+          ↓
+  POST /api/assessments/[id]/generate
+          ↓
+  Claude API → identify risks for domain
+          ↓
+  Return structured JSON array of risks
+          ↓
+  Bulk insert into risks table
+          ↓
+  Display in Risk Register with edit capability
+
+  ---
+  Cross-Shield Integration
+
+  Mirrors PolicyWriter's shield-client.ts pattern:
+
+  // lib/shield-client.ts
+  // Pulls existing data from other shield apps to pre-populate risks
+  export async function getWHSRisks(orgId: string) { ... }
+  export async function getAMLRisks(orgId: string) { ... }
+  export async function getPrivacyRisks(orgId: string) { ... }
+  export async function getFairWorkRisks(orgId: string) { ... }
+
+  Env vars:
+  WHSSHIELD_SUPABASE_URL
+  AMLSHIELD_SUPABASE_URL
+  PRIVACYSHIELD_SUPABASE_URL
+  FAIRWORKSHIELD_SUPABASE_URL
+
+  ---
+  Pricing Tiers (Stripe)
+
+  ┌──────────────┬─────────┬───────────────────────────────────────────────────────────┐
+  │     Tier     │  Price  │                          Limits                           │
+  ├──────────────┼─────────┼───────────────────────────────────────────────────────────┤
+  │ Starter      │ $49/mo  │ 5 assessments, 1 user, basic templates                    │
+  ├──────────────┼─────────┼───────────────────────────────────────────────────────────┤
+  │ Professional │ $99/mo  │ Unlimited assessments, 5 users, all domains, PDF export   │
+  ├──────────────┼─────────┼───────────────────────────────────────────────────────────┤
+  │ Advisory     │ $249/mo │ Unlimited, unlimited users, cross-shield sync, API access │
+  └──────────────┴─────────┴───────────────────────────────────────────────────────────┘
+
+  ---
+  Vercel Cron Jobs (vercel.json)
+
+  {
+    "crons": [
+      { "path": "/api/cron/review-reminders", "schedule": "0 9 * * 1" },
+      { "path": "/api/cron/risk-alerts",      "schedule": "0 8 * * *" },
+      { "path": "/api/cron/supabase-keepalive","schedule": "0 0 */5 * *" }
+    ]
+  }
+
+  ---
+  Key Differentiators vs Your Other Apps
+
+  ┌───────────────────┬─────────────────────────────────────────────┐
+  │      Feature      │                This App Adds                │
+  ├───────────────────┼─────────────────────────────────────────────┤
+  │ Risk Heat Map     │ Visual 5×5 likelihood/consequence matrix    │
+  ├───────────────────┼─────────────────────────────────────────────┤
+  │ Multi-domain      │ WHS + AML + Privacy + FairWork in one tool  │
+  ├───────────────────┼─────────────────────────────────────────────┤
+  │ Cross-shield sync │ Pulls risks from existing shield apps       │
+  ├───────────────────┼─────────────────────────────────────────────┤
+  │ Control mapping   │ Links treatments to each identified risk    │
+  ├───────────────────┼─────────────────────────────────────────────┤
+  │ Risk register     │ Centralized register across all assessments │
+  ├───────────────────┼─────────────────────────────────────────────┤
+  │ Review scheduling │ Cron-driven reminders for risk review dates │
+  ├───────────────────┼─────────────────────────────────────────────┤
+  │ Templates         │ Pre-built domain-specific risk templates    │
+  └───────────────────┴─────────────────────────────────────────────┘
+
+  ---
+  Implementation Order
+
+  1. Phase 1 — Auth, billing, team management (copy from WHSShield)
+  2. Phase 2 — Assessment CRUD + basic risk register
+  3. Phase 3 — Claude AI risk generation + domain prompts
+  4. Phase 4 — Risk heat map + scoring matrix UI
+  5. Phase 5 — Controls mapping + report export (DOCX/PDF)
+  6. Phase 6 — Cross-shield integration + templates library
+  
+  
+  
+ 
+
+
+You are a deterministic code generator. 
+You NEVER ask questions. 
+You NEVER summarise. 
+You NEVER propose next steps. 
+You NEVER output JSON unless explicitly asked.
+
+Your job is:
+1. Generate exactly the file I request.
+2. Output ONLY the file content.
+3. Wait for my next instruction.
+4. Never add commentary, explanations, or confirmations.
+
+If I say “build X”, you output ONLY the code for X.
+If I say “next file”, you output ONLY the next file.
+If I say “stop”, you stop.
+
+A “file” means: the full content of a single file, nothing else.
+
+
+
+Follow this system design belwo exactly. 
+Do not change architecture, naming, or folder structure.
+
+Your job is to implement the code step-by-step.
+Here is the design spec:
+
+FINAL SYSTEM DESIGN SPEC — RISK ASSESSMENT APP
+(Unified + Optimised for Claude Code + Ollama Build)
+
+1. Project Overview
+A SaaS risk‑management product enabling SMEs to:
+
+identify, assess, score, and treat risks
+
+manage controls and corrective actions
+
+run structured assessments across WHS, AML/CTF, Privacy, Fair Work, and general operational domains
+
+maintain a centralised risk register
+
+generate reports (PDF/DOCX)
+
+integrate with your existing Shield apps (WHS Shield, AML Shield Pro, Privacy Act Shield, Fair Work Shield)
+
+The app fits into your Compliance AI Suite and follows the same patterns as:
+
+WHS Shield
+
+AML Shield Pro
+
+Policy Writer
+
+Privacy Act Shield
+
+2. Tech Stack
+Layer	Choice	Rationale
+Framework	Next.js 16 (App Router)	Matches all your new apps
+Frontend	React 19 + TypeScript 5	Consistency + stability
+Styling	Tailwind CSS 4	Same as WHS/AML/PolicyWriter
+Forms	React Hook Form + Zod	Shared validation pattern
+Rich Text	TipTap	For risk notes & recommendations
+Database	Supabase Postgres	Multi‑tenant, scalable
+Auth	Supabase Auth	Same pattern across suite
+AI	@anthropic-ai/sdk	For risk generation
+Payments	Stripe	Same subscription model
+Email	Resend	Consistent across apps
+Exports	DOCX + jsPDF	Risk reports
+Deployment	Vercel + Cron Jobs	Matches your ecosystem
+
+3. Folder Structure (Tree Format)
+text
+riskassessment/
+  app/
+    (auth)/
+      login/
+      signup/
+      layout.tsx
+    (dashboard)/
+      layout.tsx
+      page.tsx
+      assessments/
+        page.tsx
+        new/page.tsx
+        [id]/
+          page.tsx
+          risks/page.tsx
+          controls/page.tsx
+          report/page.tsx
+      risk-register/page.tsx
+      templates/page.tsx
+      settings/page.tsx
+      billing/page.tsx
+    api/
+      auth/callback/route.ts
+      stripe/
+        webhook/route.ts
+        checkout/route.ts
+      cron/
+        review-reminders/route.ts
+        risk-alerts/route.ts
+        supabase-keepalive/route.ts
+      assessments/
+        route.ts
+        [id]/route.ts
+        [id]/generate/route.ts
+      risks/
+        route.ts
+        [id]/route.ts
+      controls/route.ts
+      reports/[id]/route.ts
+    layout.tsx
+    page.tsx
+    globals.css
+
+  components/
+    dashboard/
+      RiskHeatmap.tsx
+      RiskSummaryCards.tsx
+      RecentAssessments.tsx
+    assessments/
+      AssessmentWizard.tsx
+      AssessmentCard.tsx
+      RiskForm.tsx
+    risks/
+      RiskRegisterTable.tsx
+      RiskScoreTag.tsx
+      RiskEditor.tsx
+    controls/
+      ControlMatrix.tsx
+    ui/
+      Button.tsx
+      Input.tsx
+      Select.tsx
+      Modal.tsx
+      Badge.tsx
+      Spinner.tsx
+      EmptyState.tsx
+
+  lib/
+    anthropic.ts
+    risk-prompts.ts
+    resend.ts
+    stripe.ts
+    docx-utils.ts
+    risk-scoring.ts
+    shield-client.ts
+    supabase/
+      client.ts
+      server.ts
+      middleware.ts
+    types.ts
+
+  supabase/
+    migrations/
+      001_initial_schema.sql
+      002_team_invites.sql
+      003_assessments.sql
+      004_risk_register.sql
+      005_controls.sql
+      006_templates.sql
+      007_audit_log.sql
+      008_notifications.sql
+
+  middleware.ts
+  next.config.ts
+  tailwind.config.ts
+  vercel.json
+  .env.example
+  package.json
+4. API Endpoints (with Request/Response Schemas)
+Assessments
+POST /api/assessments  
+GET /api/assessments  
+GET /api/assessments/:id  
+PUT /api/assessments/:id  
+DELETE /api/assessments/:id
+
+AI Risk Generation
+POST /api/assessments/:id/generate
+
+Request:
+
+json
+{
+  "domain": "whs",
+  "context": "Warehouse operations with manual handling"
+}
+Response:
+
+json
+[
+  {
+    "title": "Manual handling injuries",
+    "likelihood": 4,
+    "consequence": 3,
+    "risk_score": 12,
+    "notes": "Generated by AI"
+  }
+]
+Risk Register
+POST /api/risks  
+GET /api/risks  
+GET /api/risks/:id  
+PUT /api/risks/:id  
+DELETE /api/risks/:id
+
+Controls
+POST /api/controls  
+GET /api/controls?riskId=...
+
+Reports
+GET /api/reports/:id (DOCX/PDF)
+
+Cron Jobs
+/api/cron/review-reminders
+
+/api/cron/risk-alerts
+
+/api/cron/supabase-keepalive
+
+5. Database Schema (Final Unified)
+profiles
+id
+
+email
+
+full_name
+
+organization
+
+role
+
+created_at
+
+teams
+id
+
+name
+
+owner_id
+
+subscription_tier
+
+created_at
+
+team_members
+id
+
+team_id
+
+user_id
+
+role
+
+invited_at
+
+joined_at
+
+subscriptions
+id
+
+team_id
+
+stripe_customer_id
+
+stripe_subscription_id
+
+status
+
+plan
+
+current_period_end
+
+assessments
+id
+
+team_id
+
+created_by
+
+title
+
+description
+
+domain
+
+status
+
+assessment_date
+
+review_date
+
+created_at
+
+updated_at
+
+risks
+id
+
+assessment_id
+
+team_id
+
+title
+
+description
+
+category
+
+likelihood
+
+consequence
+
+risk_score
+
+risk_level
+
+owner
+
+due_date
+
+status
+
+ai_generated
+
+notes (TipTap JSON)
+
+created_at
+
+updated_at
+
+controls
+id
+
+risk_id
+
+team_id
+
+title
+
+description
+
+type
+
+effectiveness
+
+owner
+
+implementation_date
+
+status
+
+created_at
+
+assessment_templates
+id
+
+team_id
+
+name
+
+domain
+
+template_data (JSONB)
+
+is_system_template
+
+created_at
+
+audit_log
+id
+
+team_id
+
+user_id
+
+action
+
+entity_type
+
+entity_id
+
+changes (JSONB)
+
+created_at
+
+6. Component Hierarchy
+Dashboard
+RiskHeatmap
+
+RiskSummaryCards
+
+RecentAssessments
+
+Assessments
+AssessmentWizard
+
+AssessmentCard
+
+RiskForm
+
+Risks
+RiskRegisterTable
+
+RiskScoreTag
+
+RiskEditor (TipTap)
+
+Controls
+ControlMatrix
+
+UI Primitives
+Button
+
+Input
+
+Select
+
+Modal
+
+Badge
+
+Spinner
+
+EmptyState
+
+7. Data Flow
+1. Auth
+Supabase session → middleware → injects user + team context.
+
+2. Assessment Creation
+User → AssessmentWizard → POST /assessments → redirect to detail.
+
+3. AI Risk Generation
+Assessment → POST /generate → Claude → structured risks → bulk insert → Risk Register.
+
+4. Risk Editing
+RiskForm → PUT /risks/:id → update + audit log.
+
+5. Controls
+ControlMatrix → POST /controls → update risk treatment.
+
+6. Reporting
+GET /reports/:id → DOCX/PDF export.
+
+7. Cron Jobs
+Review reminders
+
+Risk alerts
+
+Keepalive
+
+8. Error Handling Strategy
+Frontend
+Zod validation
+
+Inline field errors
+
+Toast notifications
+
+Graceful fallback UI
+
+Backend
+Structured error responses
+
+Input validation
+
+Try/catch wrappers
+
+Audit logging on all writes
+
+9. Security Considerations
+Supabase Auth + RLS
+
+Team‑scoped queries (team_id enforced server‑side)
+
+RBAC (admin, manager, viewer)
+
+Rate limiting on AI endpoints
+
+Audit logs for all changes
+
+Secrets stored in Vercel env vars
+
+10. Step‑by‑Step Build Plan
+Phase 1 — Foundations
+Auth
+
+Team management
+
+Billing
+
+Layout + navigation
+
+Phase 2 — Assessments
+CRUD
+
+Assessment wizard
+
+Basic risk register
+
+Phase 3 — AI Integration
+Claude prompts
+
+Risk generation endpoint
+
+Bulk insert
+
+Phase 4 — Risk Register Enhancements
+Heatmap
+
+Scoring matrix
+
+Risk editor
+
+Phase 5 — Controls + Reporting
+Control mapping
+
+DOCX/PDF export
+
+Phase 6 — Cross‑Shield Integration
+WHS/AML/Privacy/FairWork sync
+
+Templates library
+
