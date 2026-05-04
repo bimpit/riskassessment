@@ -47,3 +47,25 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 }
+
+export async function DELETE(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  try {
+    const supabase = await createClient()
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+
+    const { id } = await params
+    const teamId = await getTeamId(user.id)
+    if (!teamId) return NextResponse.json({ error: 'Team not found' }, { status: 404 })
+
+    const sr = await createServiceRoleClient()
+    // Delete associated risks first to avoid FK constraint violations
+    await (sr as any).from('risks').delete().eq('assessment_id', id).eq('team_id', teamId)
+    const { error } = await (sr as any).from('assessments').delete().eq('id', id).eq('team_id', teamId)
+    if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+
+    return NextResponse.json({ success: true })
+  } catch {
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
+  }
+}

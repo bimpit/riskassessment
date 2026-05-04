@@ -34,6 +34,7 @@ export default function AssessmentRisksPage() {
   const [isGenerating, setIsGenerating] = useState(false)
   const [showGenerateModal, setShowGenerateModal] = useState(false)
   const [generateContext, setGenerateContext] = useState('')
+  const [generateError, setGenerateError] = useState('')
 
   useEffect(() => {
     const loadData = async () => {
@@ -53,10 +54,11 @@ export default function AssessmentRisksPage() {
 
   const handleGenerate = async () => {
     if (!generateContext.trim()) {
-      alert('Please provide context for risk generation')
+      setGenerateError('Please provide context for risk generation')
       return
     }
     setIsGenerating(true)
+    setGenerateError('')
     try {
       const res = await fetch(`/api/assessments/${assessmentId}/generate`, {
         method: 'POST',
@@ -69,7 +71,7 @@ export default function AssessmentRisksPage() {
       setShowGenerateModal(false)
       setGenerateContext('')
     } catch (error) {
-      alert('Failed to generate risks: ' + (error as Error).message)
+      setGenerateError('Failed to generate risks: ' + (error as Error).message)
     } finally {
       setIsGenerating(false)
     }
@@ -99,8 +101,9 @@ export default function AssessmentRisksPage() {
               onChange={(e) => setGenerateContext(e.target.value)}
             />
           </div>
+          {generateError && <p className="text-sm text-red-600">{generateError}</p>}
           <div className="flex gap-4 justify-end">
-            <Button variant="secondary" onClick={() => setShowGenerateModal(false)}>Cancel</Button>
+            <Button variant="secondary" onClick={() => { setShowGenerateModal(false); setGenerateError('') }}>Cancel</Button>
             <Button variant="primary" onClick={handleGenerate} isLoading={isGenerating}>Generate Risks</Button>
           </div>
         </div>
@@ -119,8 +122,8 @@ export default function AssessmentRisksPage() {
               <thead className="bg-gray-50 border-b border-gray-200">
                 <tr>
                   <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">Risk</th>
-                  <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">L</th>
-                  <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">C</th>
+                  <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">Likelihood</th>
+                  <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">Consequence</th>
                   <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">Score</th>
                   <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">Level</th>
                   <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">Status</th>
@@ -143,7 +146,9 @@ export default function AssessmentRisksPage() {
                       </Badge>
                     </td>
                     <td className="px-6 py-4">
-                      <Badge variant={risk.status === 'closed' ? 'success' : 'warning'}>{risk.status}</Badge>
+                      <Badge variant={risk.status === 'closed' ? 'success' : 'warning'}>
+                        {risk.status === 'open' ? 'Open' : risk.status === 'mitigating' ? 'Mitigating' : 'Closed'}
+                      </Badge>
                     </td>
                     <td className="px-6 py-4">
                       <Link href={`/dashboard/risk-register/${risk.id}`}>

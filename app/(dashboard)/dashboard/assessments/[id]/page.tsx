@@ -1,11 +1,12 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { useParams } from 'next/navigation'
+import { useParams, useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
 import { Select } from '@/components/ui/Select'
 import { Spinner } from '@/components/ui/Spinner'
+import Link from 'next/link'
 
 interface Assessment {
   id: string
@@ -19,11 +20,13 @@ interface Assessment {
 
 export default function AssessmentDetailPage() {
   const params = useParams()
+  const router = useRouter()
   const assessmentId = params.id as string
   const [assessment, setAssessment] = useState<Assessment | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [isSaving, setIsSaving] = useState(false)
   const [error, setError] = useState('')
+  const [savedSuccess, setSavedSuccess] = useState(false)
 
   useEffect(() => {
     fetch(`/api/assessments/${assessmentId}`)
@@ -36,6 +39,7 @@ export default function AssessmentDetailPage() {
     if (!assessment) return
     setIsSaving(true)
     setError('')
+    setSavedSuccess(false)
     try {
       const res = await fetch(`/api/assessments/${assessmentId}`, {
         method: 'PATCH',
@@ -52,7 +56,8 @@ export default function AssessmentDetailPage() {
       const data = await res.json()
       if (!res.ok) { setError(data.error || 'Save failed'); return }
       setAssessment(data)
-      alert('Assessment saved successfully!')
+      setSavedSuccess(true)
+      setTimeout(() => setSavedSuccess(false), 3000)
     } finally {
       setIsSaving(false)
     }
@@ -63,9 +68,15 @@ export default function AssessmentDetailPage() {
 
   return (
     <div className="p-8 max-w-3xl">
+      <div className="mb-6">
+        <Link href="/dashboard/assessments" className="text-sm text-blue-600 hover:text-blue-700">
+          ← Back to Assessments
+        </Link>
+      </div>
       <h1 className="text-3xl font-bold text-gray-900 mb-8">Assessment Details</h1>
       <div className="bg-white rounded-lg border border-gray-200 p-6 space-y-6">
         {error && <div className="p-3 bg-red-50 border border-red-200 rounded text-sm text-red-700">{error}</div>}
+        {savedSuccess && <div className="p-3 bg-green-50 border border-green-200 rounded text-sm text-green-700">Assessment saved successfully.</div>}
         <Input label="Title" value={assessment.title} onChange={(e) => setAssessment({ ...assessment, title: e.target.value })} />
         <div>
           <label className="block text-sm font-medium text-gray-900 mb-2">Description</label>
@@ -77,6 +88,7 @@ export default function AssessmentDetailPage() {
         <Input label="Review Date" type="date" value={assessment.review_date || ''} onChange={(e) => setAssessment({ ...assessment, review_date: e.target.value || null })} />
         <div className="flex gap-4 pt-4">
           <Button onClick={handleSave} variant="primary" isLoading={isSaving}>Save Changes</Button>
+          <Button onClick={() => router.push('/dashboard/assessments')} variant="secondary">Cancel</Button>
         </div>
       </div>
     </div>

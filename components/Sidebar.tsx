@@ -48,7 +48,7 @@ function NavLinks({ onClose }: { onClose?: () => void }) {
           onClick={onClose}
           className={cn(
             'flex items-center gap-3 px-4 py-2 rounded-lg transition-colors',
-            pathname === item.href
+            item.href === '/dashboard' ? pathname === item.href : pathname.startsWith(item.href)
               ? 'bg-blue-600 text-white'
               : 'text-gray-300 hover:bg-gray-800'
           )}

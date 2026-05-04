@@ -1,12 +1,13 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { useParams } from 'next/navigation'
+import { useParams, useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
 import { Select } from '@/components/ui/Select'
 import { Spinner } from '@/components/ui/Spinner'
 import { getLikelihoodLabel, getConsequenceLabel } from '@/lib/risk-scoring'
+import Link from 'next/link'
 
 interface Risk {
   id: string
@@ -25,11 +26,13 @@ interface Risk {
 
 export default function RiskDetailPage() {
   const params = useParams()
+  const router = useRouter()
   const riskId = params.id as string
   const [risk, setRisk] = useState<Risk | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [isSaving, setIsSaving] = useState(false)
   const [error, setError] = useState('')
+  const [savedSuccess, setSavedSuccess] = useState(false)
 
   useEffect(() => {
     fetch(`/api/risks/${riskId}`)
@@ -42,6 +45,7 @@ export default function RiskDetailPage() {
     if (!risk) return
     setIsSaving(true)
     setError('')
+    setSavedSuccess(false)
     try {
       const res = await fetch(`/api/risks/${riskId}`, {
         method: 'PATCH',
@@ -61,7 +65,8 @@ export default function RiskDetailPage() {
       const data = await res.json()
       if (!res.ok) { setError(data.error || 'Save failed'); return }
       setRisk(data)
-      alert('Risk saved successfully!')
+      setSavedSuccess(true)
+      setTimeout(() => setSavedSuccess(false), 3000)
     } finally {
       setIsSaving(false)
     }
@@ -72,9 +77,15 @@ export default function RiskDetailPage() {
 
   return (
     <div className="p-8 max-w-3xl">
+      <div className="mb-6">
+        <Link href="/dashboard/risk-register" className="text-sm text-blue-600 hover:text-blue-700">
+          ← Back to Risk Register
+        </Link>
+      </div>
       <h1 className="text-3xl font-bold text-gray-900 mb-8">Risk Details</h1>
       <div className="bg-white rounded-lg border border-gray-200 p-6 space-y-6">
         {error && <div className="p-3 bg-red-50 border border-red-200 rounded text-sm text-red-700">{error}</div>}
+        {savedSuccess && <div className="p-3 bg-green-50 border border-green-200 rounded text-sm text-green-700">Risk saved successfully.</div>}
         <div className="grid grid-cols-2 gap-4 p-4 bg-gray-50 rounded-lg">
           <div><p className="text-sm text-gray-600">Risk Score</p><p className="text-2xl font-bold text-gray-900">{risk.risk_score}</p></div>
           <div><p className="text-sm text-gray-600">Risk Level</p>
@@ -106,6 +117,7 @@ export default function RiskDetailPage() {
         <Select label="Status" value={risk.status} onChange={(e) => setRisk({ ...risk, status: e.target.value })} options={[{ value: 'open', label: 'Open' }, { value: 'mitigating', label: 'Mitigating' }, { value: 'closed', label: 'Closed' }]} />
         <div className="flex gap-4 pt-4">
           <Button onClick={handleSave} variant="primary" isLoading={isSaving}>Save Changes</Button>
+          <Button onClick={() => router.push('/dashboard/risk-register')} variant="secondary">Cancel</Button>
         </div>
       </div>
     </div>

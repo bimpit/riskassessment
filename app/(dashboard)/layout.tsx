@@ -3,8 +3,21 @@
 import { Sidebar } from '@/components/Sidebar'
 import { Button } from '@/components/ui/Button'
 import { createClient } from '@/lib/supabase/client'
-import { useRouter } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
+
+function getPageTitle(pathname: string): string {
+  if (pathname === '/dashboard') return 'Dashboard'
+  if (pathname === '/dashboard/assessments') return 'Assessments'
+  if (pathname === '/dashboard/assessments/new') return 'New Assessment'
+  if (pathname === '/dashboard/risk-register') return 'Risk Register'
+  if (pathname === '/dashboard/templates') return 'Templates'
+  if (pathname === '/dashboard/settings') return 'Settings'
+  if (/^\/dashboard\/assessments\/.+\/risks/.test(pathname)) return 'Risks'
+  if (/^\/dashboard\/assessments\/.+/.test(pathname)) return 'Assessment Details'
+  if (/^\/dashboard\/risk-register\/.+/.test(pathname)) return 'Risk Details'
+  return 'Dashboard'
+}
 
 export default function DashboardLayout({
   children,
@@ -12,6 +25,7 @@ export default function DashboardLayout({
   children: React.ReactNode
 }) {
   const router = useRouter()
+  const pathname = usePathname()
   const [isLoading, setIsLoading] = useState(true)
   const [sidebarOpen, setSidebarOpen] = useState(false)
 
@@ -65,7 +79,7 @@ export default function DashboardLayout({
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
               </svg>
             </button>
-            <h2 className="text-lg font-semibold text-gray-900">Dashboard</h2>
+            <h2 className="text-lg font-semibold text-gray-900">{getPageTitle(pathname)}</h2>
           </div>
           <div className="flex items-center gap-4">
             <Button
