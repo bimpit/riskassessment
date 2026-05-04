@@ -1,7 +1,7 @@
 import { MetadataRoute } from 'next'
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const baseUrl = 'https://www.risk-assessment.com.au'
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://www.risk-assessment.com.au'
 
   return [
     {
