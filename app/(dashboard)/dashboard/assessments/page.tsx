@@ -85,8 +85,7 @@ export default function AssessmentsPage() {
 
   return (
     <div className="p-8">
-      <div className="flex items-center justify-between mb-8">
-        <h1 className="text-3xl font-bold text-gray-900">Assessments</h1>
+      <div className="flex justify-end mb-6">
         <Link href="/dashboard/assessments/new">
           <Button variant="primary">New Assessment</Button>
         </Link>

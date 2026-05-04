@@ -29,9 +29,6 @@ export default function TemplatesPage() {
 
   return (
     <div className="p-8">
-      <div className="flex items-center justify-between mb-8">
-        <h1 className="text-3xl font-bold text-gray-900">Assessment Templates</h1>
-      </div>
       <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
         {templates.length === 0 ? (
           <div className="p-12 text-center">

@@ -64,9 +64,6 @@ export default function RiskRegisterPage() {
 
   return (
     <div className="p-8">
-      <div className="flex items-center justify-between mb-8">
-        <h1 className="text-3xl font-bold text-gray-900">Risk Register</h1>
-      </div>
       <div className="mb-6 flex gap-2 flex-wrap">
         <Button variant={filterLevel === null ? 'primary' : 'secondary'} size="sm" onClick={() => setFilterLevel(null)}>
           All ({risks.length})
