@@ -131,9 +131,14 @@ export default function TemplatesPage() {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 p-6">
             {templates.map((template) => (
-              <div key={template.id} className="flex flex-col border border-gray-200 rounded-xl p-5 hover:shadow-md hover:border-gray-300 transition-all">
+              <button
+                key={template.id}
+                type="button"
+                onClick={() => openUseTemplate(template)}
+                className="flex flex-col text-left border border-gray-200 rounded-xl p-5 hover:shadow-lg hover:border-blue-400 hover:bg-blue-50/30 transition-all cursor-pointer group"
+              >
                 <div className="flex items-start justify-between gap-2 mb-3">
-                  <h3 className="font-semibold text-gray-900 leading-snug">{template.name}</h3>
+                  <h3 className="font-semibold text-gray-900 leading-snug group-hover:text-blue-700 transition-colors">{template.name}</h3>
                   {template.is_system_template && (
                     <span className="shrink-0 text-xs font-medium text-blue-600 bg-blue-50 border border-blue-200 rounded-full px-2 py-0.5">System</span>
                   )}
@@ -146,10 +151,13 @@ export default function TemplatesPage() {
                 ) : (
                   <div className="flex-1 mb-4" />
                 )}
-                <Button variant="primary" size="sm" className="w-full" onClick={() => openUseTemplate(template)}>
+                <span className="text-sm font-medium text-blue-600 group-hover:text-blue-700 flex items-center gap-1">
                   Use Template
-                </Button>
-              </div>
+                  <svg className="w-4 h-4 transition-transform group-hover:translate-x-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
+                </span>
+              </button>
             ))}
           </div>
         )}
