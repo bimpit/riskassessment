@@ -3,6 +3,7 @@
 import { useEffect, useState, FormEvent } from 'react'
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/Button'
+import { Badge } from '@/components/ui/Badge'
 import { Input } from '@/components/ui/Input'
 import { Select } from '@/components/ui/Select'
 import { Modal } from '@/components/ui/Modal'
@@ -18,6 +19,9 @@ interface Template {
 }
 
 const domainLabels: Record<string, string> = { whs: 'WHS', aml: 'AML', privacy: 'Privacy', fairwork: 'Fair Work', operational: 'Operational' }
+
+type BadgeVariant = 'default' | 'warning' | 'high' | 'success' | 'medium'
+const domainBadgeVariant: Record<string, BadgeVariant> = { whs: 'warning', aml: 'high', privacy: 'medium', fairwork: 'success', operational: 'default' }
 
 const domainOptions = [
   { value: 'whs', label: 'Work Health & Safety (WHS)' },
@@ -125,16 +129,24 @@ export default function TemplatesPage() {
             <Button variant="primary" onClick={() => setShowCreate(true)}>Create First Template</Button>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 p-6">
             {templates.map((template) => (
-              <div key={template.id} className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
-                <h3 className="font-semibold text-gray-900 mb-2">{template.name}</h3>
-                <p className="text-sm text-gray-600 mb-1">Domain: {domainLabels[template.domain] || template.domain}</p>
-                {template.template_data?.description && (
-                  <p className="text-sm text-gray-500 mb-3 line-clamp-2">{template.template_data.description}</p>
+              <div key={template.id} className="flex flex-col border border-gray-200 rounded-xl p-5 hover:shadow-md hover:border-gray-300 transition-all">
+                <div className="flex items-start justify-between gap-2 mb-3">
+                  <h3 className="font-semibold text-gray-900 leading-snug">{template.name}</h3>
+                  {template.is_system_template && (
+                    <span className="shrink-0 text-xs font-medium text-blue-600 bg-blue-50 border border-blue-200 rounded-full px-2 py-0.5">System</span>
+                  )}
+                </div>
+                <Badge variant={domainBadgeVariant[template.domain] ?? 'default'} className="self-start mb-3">
+                  {domainLabels[template.domain] || template.domain}
+                </Badge>
+                {template.template_data?.description ? (
+                  <p className="text-sm text-gray-500 line-clamp-3 flex-1 mb-4">{template.template_data.description}</p>
+                ) : (
+                  <div className="flex-1 mb-4" />
                 )}
-                {template.is_system_template && <p className="text-xs text-blue-600 mb-3">System Template</p>}
-                <Button variant="outline" size="sm" className="w-full" onClick={() => openUseTemplate(template)}>
+                <Button variant="primary" size="sm" className="w-full" onClick={() => openUseTemplate(template)}>
                   Use Template
                 </Button>
               </div>
