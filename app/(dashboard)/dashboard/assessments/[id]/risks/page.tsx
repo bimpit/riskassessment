@@ -25,6 +25,14 @@ interface Assessment {
   domain: string
 }
 
+const domainLabels: Record<string, string> = {
+  whs: 'WHS',
+  aml: 'AML',
+  privacy: 'Privacy',
+  fairwork: 'Fair Work',
+  operational: 'Operational',
+}
+
 export default function AssessmentRisksPage() {
   const params = useParams()
   const assessmentId = params.id as string
@@ -33,8 +41,10 @@ export default function AssessmentRisksPage() {
   const [isLoading, setIsLoading] = useState(true)
   const [isGenerating, setIsGenerating] = useState(false)
   const [showGenerateModal, setShowGenerateModal] = useState(false)
+  const [showUpgradeModal, setShowUpgradeModal] = useState(false)
   const [generateContext, setGenerateContext] = useState('')
   const [generateError, setGenerateError] = useState('')
+  const [needsUpgrade, setNeedsUpgrade] = useState(false)
 
   useEffect(() => {
     const loadData = async () => {
@@ -52,9 +62,17 @@ export default function AssessmentRisksPage() {
     loadData()
   }, [assessmentId])
 
+  const handleOpenGenerate = () => {
+    if (needsUpgrade) {
+      setShowUpgradeModal(true)
+    } else {
+      setShowGenerateModal(true)
+    }
+  }
+
   const handleGenerate = async () => {
     if (!generateContext.trim()) {
-      setGenerateError('Please provide context for risk generation')
+      setGenerateError('Please describe your workplace or activity before generating.')
       return
     }
     setIsGenerating(true)
@@ -66,12 +84,19 @@ export default function AssessmentRisksPage() {
         body: JSON.stringify({ domain: assessment?.domain, context: generateContext }),
       })
       const data = await res.json()
-      if (!res.ok) throw new Error(data.error || 'Failed to generate risks')
+      if (!res.ok) {
+        if (data.upgrade) {
+          setNeedsUpgrade(true)
+          setShowGenerateModal(false)
+          setShowUpgradeModal(true)
+        } else {
+          setGenerateError(data.error || 'Failed to generate risks')
+        }
+        return
+      }
       setRisks((prev) => [...prev, ...data])
       setShowGenerateModal(false)
       setGenerateContext('')
-    } catch (error) {
-      setGenerateError('Failed to generate risks: ' + (error as Error).message)
     } finally {
       setIsGenerating(false)
     }
@@ -79,32 +104,72 @@ export default function AssessmentRisksPage() {
 
   if (isLoading) return <div className="flex items-center justify-center h-full"><Spinner /></div>
 
+  const domainLabel = domainLabels[assessment?.domain ?? ''] || assessment?.domain
+
   return (
     <div className="p-8">
       <div className="flex items-center justify-between mb-8">
         <div>
           <h1 className="text-3xl font-bold text-gray-900">Risks for {assessment?.title}</h1>
-          <p className="text-gray-600 mt-2">Domain: {assessment?.domain}</p>
+          <p className="text-gray-600 mt-2">Domain: {domainLabel}</p>
         </div>
-        <Button variant="primary" onClick={() => setShowGenerateModal(true)}>Generate with AI</Button>
+        <Button variant="primary" onClick={handleOpenGenerate}>Generate with AI</Button>
       </div>
 
-      <Modal isOpen={showGenerateModal} onClose={() => setShowGenerateModal(false)} title="Generate Risks with AI" size="lg">
+      {/* Generate context modal */}
+      <Modal
+        isOpen={showGenerateModal}
+        onClose={() => { setShowGenerateModal(false); setGenerateError('') }}
+        title="Generate Risks with AI"
+        size="lg"
+      >
         <div className="space-y-4">
+          <p className="text-sm text-gray-600">
+            AI will generate 5–8 scored risks tailored to your{' '}
+            <span className="font-medium">{domainLabel}</span> assessment and add them directly to this list.
+            Each risk will include a title, description, category, and likelihood and consequence scores.
+          </p>
           <div>
-            <label className="block text-sm font-medium text-gray-900 mb-2">Context</label>
+            <label className="block text-sm font-medium text-gray-900 mb-2">
+              Describe your workplace or activity
+            </label>
             <textarea
               className="w-full px-3 py-2 rounded-lg border border-gray-300 text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
               rows={6}
-              placeholder="Describe the context for this assessment. E.g., 'Warehouse operations with heavy machinery and 50+ staff'"
+              placeholder="E.g. 'Warehouse operations with heavy machinery and 50+ staff' or 'Aged-care facility providing in-home services across regional Victoria'"
               value={generateContext}
               onChange={(e) => setGenerateContext(e.target.value)}
             />
           </div>
           {generateError && <p className="text-sm text-red-600">{generateError}</p>}
-          <div className="flex gap-4 justify-end">
-            <Button variant="secondary" onClick={() => { setShowGenerateModal(false); setGenerateError('') }}>Cancel</Button>
-            <Button variant="primary" onClick={handleGenerate} isLoading={isGenerating}>Generate Risks</Button>
+          <div className="flex gap-3 justify-end">
+            <Button variant="secondary" onClick={() => { setShowGenerateModal(false); setGenerateError('') }}>
+              Cancel
+            </Button>
+            <Button variant="primary" onClick={handleGenerate} isLoading={isGenerating}>
+              Generate with AI
+            </Button>
+          </div>
+        </div>
+      </Modal>
+
+      {/* Upgrade modal */}
+      <Modal
+        isOpen={showUpgradeModal}
+        onClose={() => setShowUpgradeModal(false)}
+        title="Upgrade Required"
+        size="sm"
+      >
+        <div className="space-y-4">
+          <p className="text-sm text-gray-600">
+            Your free plan includes one AI risk generation. Upgrade to Pro to generate unlimited
+            risks across all your assessments.
+          </p>
+          <div className="flex justify-end gap-3">
+            <Button variant="secondary" onClick={() => setShowUpgradeModal(false)}>Cancel</Button>
+            <Link href="/dashboard/billing">
+              <Button variant="primary">View Plans</Button>
+            </Link>
           </div>
         </div>
       </Modal>
@@ -112,9 +177,12 @@ export default function AssessmentRisksPage() {
       <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
         {risks.length === 0 ? (
           <div className="p-12 text-center">
-            <h3 className="text-lg font-medium text-gray-900 mb-2">No risks</h3>
-            <p className="text-gray-600 mb-4">Generate risks using AI or add them manually.</p>
-            <Button variant="primary" onClick={() => setShowGenerateModal(true)}>Generate Risks</Button>
+            <h3 className="text-lg font-medium text-gray-900 mb-2">No risks yet</h3>
+            <p className="text-gray-600 mb-4">
+              Use AI to generate a set of risks based on your workplace context, or add risks
+              manually from the Risk Register.
+            </p>
+            <Button variant="primary" onClick={handleOpenGenerate}>Generate with AI</Button>
           </div>
         ) : (
           <div className="overflow-x-auto">
