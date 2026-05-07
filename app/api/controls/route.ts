@@ -54,8 +54,18 @@ export async function POST(request: NextRequest) {
 
     const body = await request.json()
     const sr = await createServiceRoleClient()
-    const { data, error } = await (sr as any).from('controls').insert({ ...body, team_id: teamId }).select().single()
+    const srAny = sr as any
+    const { data, error } = await srAny.from('controls').insert({ ...body, team_id: teamId }).select().single()
     if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+
+    await srAny.from('audit_log').insert({
+      team_id: teamId,
+      user_id: user.id,
+      action: 'CREATE',
+      entity_type: 'controls',
+      entity_id: data.id,
+      changes: data,
+    })
 
     return NextResponse.json(data, { status: 201 })
   } catch {
