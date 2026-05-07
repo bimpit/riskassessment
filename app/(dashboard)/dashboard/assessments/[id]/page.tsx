@@ -68,10 +68,18 @@ export default function AssessmentDetailPage() {
 
   return (
     <div className="p-8 max-w-3xl">
-      <div className="mb-6">
+      <div className="mb-6 flex items-center justify-between gap-4 flex-wrap">
         <Link href="/dashboard/assessments" className="text-sm text-blue-600 hover:text-blue-700">
           ← Back to Assessments
         </Link>
+        <div className="flex items-center gap-2">
+          <Link href={`/dashboard/assessments/${assessmentId}/risks`}>
+            <Button variant="outline" size="sm">View Risks</Button>
+          </Link>
+          <Link href={`/dashboard/assessments/${assessmentId}/report`}>
+            <Button variant="outline" size="sm">Export Report</Button>
+          </Link>
+        </div>
       </div>
       <h1 className="text-3xl font-bold text-gray-900 mb-8">Assessment Details</h1>
       <div className="bg-white rounded-lg border border-gray-200 p-6 space-y-6">
