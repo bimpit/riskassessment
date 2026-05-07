@@ -102,6 +102,15 @@ export default function AssessmentRisksPage() {
       setRisks((prev) => [...prev, ...data])
       setShowGenerateModal(false)
       setGenerateContext('')
+
+      const eligibilityRes = await fetch(`/api/assessments/${assessmentId}/generate`)
+      if (eligibilityRes.ok) {
+        const eligibility = await eligibilityRes.json()
+        if (eligibility?.canGenerate === false) {
+          setNeedsUpgrade(true)
+          setShowUpgradeModal(true)
+        }
+      }
     } finally {
       setIsGenerating(false)
     }
