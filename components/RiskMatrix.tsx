@@ -56,59 +56,61 @@ export function RiskMatrix({ risks }: RiskMatrixProps) {
       </div>
 
       <div className="overflow-x-auto">
-        <div className="inline-flex gap-3 min-w-full">
-          <div className="flex items-center justify-center px-1 pb-12">
-            <span className="[writing-mode:vertical-rl] rotate-180 text-xs uppercase tracking-wider text-gray-500 font-semibold whitespace-nowrap">
-              Likelihood
-            </span>
-          </div>
-
-          <div
-            className="grid gap-1.5 flex-1"
-            style={{ gridTemplateColumns: '7rem repeat(5, minmax(72px, 1fr))' }}
-          >
-            {likelihoodRows.map((l) => (
-              <Fragment key={l}>
-                <div className="flex items-center justify-end pr-2 text-right">
-                  <div>
-                    <p className="text-sm font-semibold text-gray-900">{l}</p>
-                    <p className="text-xs text-gray-500 leading-tight">{likelihoodLabels[l]}</p>
-                  </div>
-                </div>
-                {consequenceCols.map((c) => {
-                  const score = calculateRiskScore(l, c)
-                  const level = getRiskLevel(score)
-                  const count = counts[`${l}-${c}`] ?? 0
-                  return (
-                    <div
-                      key={c}
-                      title={`${level[0].toUpperCase() + level.slice(1)} (score ${score}) — ${count} risk${count !== 1 ? 's' : ''}`}
-                      className={`h-16 flex items-center justify-center border rounded ${cellClass(level)}`}
-                    >
-                      {count > 0 ? (
-                        <span className="text-2xl font-bold leading-none">{count}</span>
-                      ) : (
-                        <span className="text-sm font-medium opacity-50">{score}</span>
-                      )}
-                    </div>
-                  )
-                })}
-              </Fragment>
-            ))}
-
-            <div></div>
-            {consequenceCols.map((c) => (
-              <div key={c} className="text-center pt-2">
-                <p className="text-sm font-semibold text-gray-900">{c}</p>
-                <p className="text-xs text-gray-500 leading-tight">{consequenceLabels[c]}</p>
-              </div>
-            ))}
-
-            <div></div>
-            <div className="col-span-5 text-center pt-1">
-              <span className="text-xs uppercase tracking-wider text-gray-500 font-semibold">
-                Consequence
+        <div className="flex justify-center">
+          <div className="flex gap-3">
+            <div className="flex items-center justify-center px-1 pb-12">
+              <span className="[writing-mode:vertical-rl] rotate-180 text-xs uppercase tracking-wider text-gray-500 font-semibold whitespace-nowrap">
+                Likelihood
               </span>
+            </div>
+
+            <div
+              className="grid gap-1.5"
+              style={{ gridTemplateColumns: '7rem repeat(5, 84px)' }}
+            >
+              {likelihoodRows.map((l) => (
+                <Fragment key={l}>
+                  <div className="flex items-center justify-end pr-2 text-right">
+                    <div>
+                      <p className="text-sm font-semibold text-gray-900">{l}</p>
+                      <p className="text-xs text-gray-500 leading-tight">{likelihoodLabels[l]}</p>
+                    </div>
+                  </div>
+                  {consequenceCols.map((c) => {
+                    const score = calculateRiskScore(l, c)
+                    const level = getRiskLevel(score)
+                    const count = counts[`${l}-${c}`] ?? 0
+                    return (
+                      <div
+                        key={c}
+                        title={`${level[0].toUpperCase() + level.slice(1)} (score ${score}) — ${count} risk${count !== 1 ? 's' : ''}`}
+                        className={`h-16 flex items-center justify-center border rounded ${cellClass(level)}`}
+                      >
+                        {count > 0 ? (
+                          <span className="text-2xl font-bold leading-none">{count}</span>
+                        ) : (
+                          <span className="text-sm font-medium opacity-50">{score}</span>
+                        )}
+                      </div>
+                    )
+                  })}
+                </Fragment>
+              ))}
+
+              <div></div>
+              {consequenceCols.map((c) => (
+                <div key={c} className="text-center pt-2">
+                  <p className="text-sm font-semibold text-gray-900">{c}</p>
+                  <p className="text-xs text-gray-500 leading-tight">{consequenceLabels[c]}</p>
+                </div>
+              ))}
+
+              <div></div>
+              <div className="col-span-5 text-center pt-1">
+                <span className="text-xs uppercase tracking-wider text-gray-500 font-semibold">
+                  Consequence
+                </span>
+              </div>
             </div>
           </div>
         </div>

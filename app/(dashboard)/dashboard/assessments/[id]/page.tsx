@@ -77,7 +77,7 @@ export default function AssessmentDetailPage() {
             <Button variant="outline" size="sm">View Risks</Button>
           </Link>
           <Link href={`/dashboard/assessments/${assessmentId}/report`}>
-            <Button variant="outline" size="sm">Export Report</Button>
+            <Button variant="primary" size="sm">Export PDF</Button>
           </Link>
         </div>
       </div>

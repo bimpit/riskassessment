@@ -152,7 +152,7 @@ export default function AssessmentsPage() {
                           <Button variant="outline" size="sm">View</Button>
                         </Link>
                         <Link href={`/dashboard/assessments/${assessment.id}/report`}>
-                          <Button variant="outline" size="sm">Report</Button>
+                          <Button variant="secondary" size="sm">Export PDF</Button>
                         </Link>
                         <Link href={`/dashboard/assessments/${assessment.id}`}>
                           <Button variant="secondary" size="sm">Edit</Button>

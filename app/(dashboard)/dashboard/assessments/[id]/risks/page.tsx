@@ -129,7 +129,7 @@ export default function AssessmentRisksPage() {
         </div>
         <div className="flex items-center gap-2">
           <Link href={`/dashboard/assessments/${assessmentId}/report`}>
-            <Button variant="secondary">Export Report</Button>
+            <Button variant="secondary">Export PDF</Button>
           </Link>
           <Button variant="primary" onClick={handleOpenGenerate}>Generate with AI</Button>
         </div>
