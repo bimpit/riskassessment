@@ -30,7 +30,11 @@ export async function GET(request: NextRequest) {
       .order('created_at', { ascending: false })
       .limit(limit)
 
-    if (entityType) query = query.eq('entity_type', entityType)
+    if (entityType === 'assessments') {
+      query = query.in('entity_type', ['assessments', 'assessment'])
+    } else if (entityType) {
+      query = query.eq('entity_type', entityType)
+    }
 
     const { data, error } = await query
     if (error) return NextResponse.json({ error: error.message }, { status: 500 })

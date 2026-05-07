@@ -37,7 +37,7 @@ export async function GET() {
         .from('audit_log')
         .select('id', { count: 'exact', head: true })
         .eq('team_id', teamMember.team_id)
-        .eq('entity_type', 'assessment')
+        .in('entity_type', ['assessments', 'assessment'])
         .eq('action', 'ai_generated'),
     ])
 
@@ -97,7 +97,7 @@ export async function POST(
         .from('audit_log')
         .select('id', { count: 'exact', head: true })
         .eq('team_id', teamMember.team_id)
-        .eq('entity_type', 'assessment')
+        .in('entity_type', ['assessments', 'assessment'])
         .eq('action', 'ai_generated'),
     ])
 
@@ -182,7 +182,7 @@ Example format:
       team_id: teamMember.team_id,
       user_id: user.id,
       action: 'ai_generated',
-      entity_type: 'assessment',
+      entity_type: 'assessments',
       entity_id: assessmentId,
     })
 
