@@ -122,12 +122,17 @@ export default function AssessmentRisksPage() {
 
   return (
     <div className="p-8">
-      <div className="flex items-center justify-between mb-8">
+      <div className="flex items-center justify-between mb-8 gap-4 flex-wrap">
         <div>
           <h1 className="text-3xl font-bold text-gray-900">Risks for {assessment?.title}</h1>
           <p className="text-gray-600 mt-2">Domain: {domainLabel}</p>
         </div>
-        <Button variant="primary" onClick={handleOpenGenerate}>Generate with AI</Button>
+        <div className="flex items-center gap-2">
+          <Link href={`/dashboard/assessments/${assessmentId}/report`}>
+            <Button variant="secondary">Export Report</Button>
+          </Link>
+          <Button variant="primary" onClick={handleOpenGenerate}>Generate with AI</Button>
+        </div>
       </div>
 
       {/* Generate context modal */}

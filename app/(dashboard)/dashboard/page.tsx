@@ -6,6 +6,7 @@ import { Badge } from '@/components/ui/Badge'
 import { Modal } from '@/components/ui/Modal'
 import Link from 'next/link'
 import { Spinner } from '@/components/ui/Spinner'
+import { RiskMatrix } from '@/components/RiskMatrix'
 
 interface Assessment {
   id: string
@@ -13,6 +14,17 @@ interface Assessment {
   domain: string
   status: string
   assessment_date: string
+}
+
+interface Risk {
+  id: string
+  title: string
+  likelihood: number
+  consequence: number
+  risk_level: string
+  owner: string | null
+  due_date: string | null
+  status: string
 }
 
 interface RiskSummary {
@@ -38,8 +50,17 @@ const statusLabels: Record<string, string> = {
   archived: 'Archived',
 }
 
+function daysFromNow(dateStr: string): number {
+  const due = new Date(dateStr)
+  const today = new Date()
+  today.setHours(0, 0, 0, 0)
+  due.setHours(0, 0, 0, 0)
+  return Math.round((due.getTime() - today.getTime()) / (1000 * 60 * 60 * 24))
+}
+
 export default function DashboardPage() {
   const [assessments, setAssessments] = useState<Assessment[]>([])
+  const [risks, setRisks] = useState<Risk[]>([])
   const [riskSummary, setRiskSummary] = useState<RiskSummary>({
     critical: 0,
     high: 0,
@@ -66,7 +87,8 @@ export default function DashboardPage() {
         }
 
         if (risksRes.ok) {
-          const risksData: { risk_level: string }[] = await risksRes.json()
+          const risksData: Risk[] = await risksRes.json()
+          setRisks(risksData)
           setRiskSummary({
             critical: risksData.filter((r) => r.risk_level === 'critical').length,
             high: risksData.filter((r) => r.risk_level === 'high').length,
@@ -111,6 +133,17 @@ export default function DashboardPage() {
 
   const deleteTarget = assessments.find((a) => a.id === deleteId)
 
+  const overdue = risks
+    .filter((r) => r.status !== 'closed' && r.due_date && daysFromNow(r.due_date) < 0)
+    .sort((a, b) => daysFromNow(a.due_date!) - daysFromNow(b.due_date!))
+  const dueSoon = risks
+    .filter((r) => {
+      if (r.status === 'closed' || !r.due_date) return false
+      const d = daysFromNow(r.due_date)
+      return d >= 0 && d <= 7
+    })
+    .sort((a, b) => daysFromNow(a.due_date!) - daysFromNow(b.due_date!))
+
   return (
     <div className="p-8 space-y-8">
       {/* Risk Summary Cards */}
@@ -134,6 +167,58 @@ export default function DashboardPage() {
         <div className="bg-white rounded-lg border border-green-200 p-6">
           <h3 className="text-sm font-medium text-green-600 mb-2">Low</h3>
           <p className="text-3xl font-bold text-green-700">{riskSummary.low}</p>
+        </div>
+      </div>
+
+      <RiskMatrix risks={risks} />
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        <div className="bg-white rounded-lg border border-red-200">
+          <div className="p-4 border-b border-red-100 flex items-center justify-between">
+            <h3 className="font-semibold text-red-700">Overdue Actions</h3>
+            <span className="text-sm text-red-700 font-medium">{overdue.length}</span>
+          </div>
+          {overdue.length === 0 ? (
+            <p className="p-4 text-sm text-gray-500">No overdue risks. Nice work.</p>
+          ) : (
+            <ul className="divide-y divide-gray-100">
+              {overdue.slice(0, 5).map((r) => (
+                <li key={r.id} className="p-4 flex items-center justify-between gap-3">
+                  <div className="min-w-0">
+                    <Link href={`/dashboard/risk-register/${r.id}`} className="font-medium text-gray-900 hover:text-blue-600 block truncate">{r.title}</Link>
+                    <p className="text-xs text-gray-500 mt-0.5">
+                      Due {new Date(r.due_date!).toLocaleDateString()} · {Math.abs(daysFromNow(r.due_date!))} days overdue{r.owner ? ` · ${r.owner}` : ''}
+                    </p>
+                  </div>
+                  <Badge variant={r.risk_level as any}>{r.risk_level}</Badge>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+
+        <div className="bg-white rounded-lg border border-yellow-200">
+          <div className="p-4 border-b border-yellow-100 flex items-center justify-between">
+            <h3 className="font-semibold text-yellow-700">Due This Week</h3>
+            <span className="text-sm text-yellow-700 font-medium">{dueSoon.length}</span>
+          </div>
+          {dueSoon.length === 0 ? (
+            <p className="p-4 text-sm text-gray-500">Nothing due in the next 7 days.</p>
+          ) : (
+            <ul className="divide-y divide-gray-100">
+              {dueSoon.slice(0, 5).map((r) => (
+                <li key={r.id} className="p-4 flex items-center justify-between gap-3">
+                  <div className="min-w-0">
+                    <Link href={`/dashboard/risk-register/${r.id}`} className="font-medium text-gray-900 hover:text-blue-600 block truncate">{r.title}</Link>
+                    <p className="text-xs text-gray-500 mt-0.5">
+                      Due {new Date(r.due_date!).toLocaleDateString()} · in {daysFromNow(r.due_date!)} days{r.owner ? ` · ${r.owner}` : ''}
+                    </p>
+                  </div>
+                  <Badge variant={r.risk_level as any}>{r.risk_level}</Badge>
+                </li>
+              ))}
+            </ul>
+          )}
         </div>
       </div>
 
@@ -181,7 +266,7 @@ export default function DashboardPage() {
                     </td>
                     <td className="px-6 py-4 text-sm">
                       <div className="flex items-center gap-2">
-                        <Link href={`/dashboard/assessments/${assessment.id}`}>
+                        <Link href={`/dashboard/assessments/${assessment.id}/risks`}>
                           <Button variant="outline" size="sm">View</Button>
                         </Link>
                         <Button

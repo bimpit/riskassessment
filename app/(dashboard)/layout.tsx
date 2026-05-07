@@ -13,6 +13,8 @@ function getPageTitle(pathname: string): string {
   if (pathname === '/dashboard/risk-register') return 'Risk Register'
   if (pathname === '/dashboard/templates') return 'Templates'
   if (pathname === '/dashboard/settings') return 'Settings'
+  if (pathname === '/dashboard/activity') return 'Activity'
+  if (/^\/dashboard\/assessments\/.+\/report/.test(pathname)) return 'Assessment Report'
   if (/^\/dashboard\/assessments\/.+\/risks/.test(pathname)) return 'Risks'
   if (/^\/dashboard\/assessments\/.+/.test(pathname)) return 'Assessment Details'
   if (/^\/dashboard\/risk-register\/.+/.test(pathname)) return 'Risk Details'
@@ -65,10 +67,12 @@ export default function DashboardLayout({
   }
 
   return (
-    <div className="flex h-screen bg-gray-50 overflow-hidden">
-      <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
-      <div className="flex-1 flex flex-col overflow-hidden min-w-0">
-        <header className="bg-white border-b border-gray-200 px-4 lg:px-6 py-4 flex items-center justify-between">
+    <div className="flex h-screen bg-gray-50 overflow-hidden print:block print:h-auto print:overflow-visible print:bg-white">
+      <div className="print:hidden contents">
+        <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
+      </div>
+      <div className="flex-1 flex flex-col overflow-hidden min-w-0 print:overflow-visible">
+        <header className="bg-white border-b border-gray-200 px-4 lg:px-6 py-4 flex items-center justify-between print:hidden">
           <div className="flex items-center gap-3">
             <button
               onClick={() => setSidebarOpen(true)}

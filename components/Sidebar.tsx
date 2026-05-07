@@ -26,6 +26,11 @@ const navItems = [
     icon: '📑',
   },
   {
+    href: '/dashboard/activity',
+    label: 'Activity',
+    icon: '🕘',
+  },
+  {
     href: '/dashboard/settings',
     label: 'Settings',
     icon: '⚙️',
