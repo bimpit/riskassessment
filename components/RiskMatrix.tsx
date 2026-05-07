@@ -50,9 +50,9 @@ export function RiskMatrix({ risks }: RiskMatrixProps) {
 
   return (
     <div className="bg-white rounded-lg border border-gray-200 p-6">
-      <div className="flex items-center justify-between mb-6">
+      <div className="text-center mb-6">
         <h2 className="text-lg font-semibold text-gray-900">Risk Matrix</h2>
-        <p className="text-xs text-gray-500">Likelihood × Consequence</p>
+        <p className="text-xs text-gray-500 mt-1">Likelihood × Consequence</p>
       </div>
 
       <div className="overflow-x-auto">
@@ -116,7 +116,7 @@ export function RiskMatrix({ risks }: RiskMatrixProps) {
         </div>
       </div>
 
-      <div className="mt-5 flex flex-wrap gap-3 text-xs text-gray-600">
+      <div className="mt-5 flex flex-wrap justify-center gap-3 text-xs text-gray-600">
         <span className="flex items-center gap-1.5"><span className={`w-3 h-3 rounded ${cellClass('low')}`}></span> Low (1–5)</span>
         <span className="flex items-center gap-1.5"><span className={`w-3 h-3 rounded ${cellClass('medium')}`}></span> Medium (6–11)</span>
         <span className="flex items-center gap-1.5"><span className={`w-3 h-3 rounded ${cellClass('high')}`}></span> High (12–19)</span>
