@@ -46,6 +46,15 @@ export default function TemplatesPage() {
   const [useError, setUseError] = useState('')
   const [useForm, setUseForm] = useState({ title: '', assessment_date: new Date().toISOString().split('T')[0] })
 
+  const [editTemplate, setEditTemplate] = useState<Template | null>(null)
+  const [editForm, setEditForm] = useState({ name: '', domain: 'operational', description: '' })
+  const [isUpdating, setIsUpdating] = useState(false)
+  const [editError, setEditError] = useState('')
+
+  const [deleteTemplate, setDeleteTemplate] = useState<Template | null>(null)
+  const [isDeleting, setIsDeleting] = useState(false)
+  const [deleteError, setDeleteError] = useState('')
+
   useEffect(() => {
     fetch('/api/templates')
       .then((r) => r.json())
@@ -85,6 +94,66 @@ export default function TemplatesPage() {
     setUseTemplate(template)
     setUseError('')
     setUseForm({ title: '', assessment_date: new Date().toISOString().split('T')[0] })
+  }
+
+  const openEdit = (template: Template) => {
+    setEditTemplate(template)
+    setEditForm({
+      name: template.name,
+      domain: template.domain,
+      description: template.template_data?.description || '',
+    })
+    setEditError('')
+  }
+
+  const closeEdit = () => {
+    setEditTemplate(null)
+    setEditError('')
+  }
+
+  const handleUpdate = async (e: FormEvent) => {
+    e.preventDefault()
+    if (!editTemplate) return
+    setEditError('')
+    setIsUpdating(true)
+    try {
+      const res = await fetch(`/api/templates/${editTemplate.id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(editForm),
+      })
+      const data = await res.json()
+      if (!res.ok) { setEditError(data.error || 'Failed to update template'); return }
+      setTemplates((prev) => prev.map((t) => (t.id === data.id ? data : t)))
+      setEditTemplate(null)
+    } catch {
+      setEditError('Failed to update template')
+    } finally {
+      setIsUpdating(false)
+    }
+  }
+
+  const openDelete = (template: Template) => {
+    setDeleteTemplate(template)
+    setDeleteError('')
+  }
+
+  const handleDelete = async () => {
+    if (!deleteTemplate) return
+    setIsDeleting(true)
+    setDeleteError('')
+    try {
+      const res = await fetch(`/api/templates/${deleteTemplate.id}`, { method: 'DELETE' })
+      if (!res.ok) {
+        const data = await res.json()
+        setDeleteError(data.error || 'Failed to delete template')
+        return
+      }
+      setTemplates((prev) => prev.filter((t) => t.id !== deleteTemplate.id))
+      setDeleteTemplate(null)
+    } finally {
+      setIsDeleting(false)
+    }
   }
 
   const handleUseTemplate = async (e: FormEvent) => {
@@ -131,16 +200,46 @@ export default function TemplatesPage() {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 p-6">
             {templates.map((template) => (
-              <button
+              <div
                 key={template.id}
-                type="button"
+                role="button"
+                tabIndex={0}
                 onClick={() => openUseTemplate(template)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault()
+                    openUseTemplate(template)
+                  }
+                }}
                 className="flex flex-col text-left border border-gray-200 rounded-xl p-5 hover:shadow-lg hover:border-blue-400 hover:bg-blue-50/30 transition-all cursor-pointer group"
               >
                 <div className="flex items-start justify-between gap-2 mb-3">
                   <h3 className="font-semibold text-gray-900 leading-snug group-hover:text-blue-700 transition-colors">{template.name}</h3>
-                  {template.is_system_template && (
+                  {template.is_system_template ? (
                     <span className="shrink-0 text-xs font-medium text-blue-600 bg-blue-50 border border-blue-200 rounded-full px-2 py-0.5">System</span>
+                  ) : (
+                    <div className="shrink-0 flex items-center gap-1">
+                      <button
+                        type="button"
+                        onClick={(e) => { e.stopPropagation(); openEdit(template) }}
+                        className="p-1 rounded text-gray-400 hover:text-blue-600 hover:bg-blue-50 transition-colors"
+                        aria-label="Edit template"
+                      >
+                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                        </svg>
+                      </button>
+                      <button
+                        type="button"
+                        onClick={(e) => { e.stopPropagation(); openDelete(template) }}
+                        className="p-1 rounded text-gray-400 hover:text-red-600 hover:bg-red-50 transition-colors"
+                        aria-label="Delete template"
+                      >
+                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6M4 7h16M9 7V4a1 1 0 011-1h4a1 1 0 011 1v3" />
+                        </svg>
+                      </button>
+                    </div>
                   )}
                 </div>
                 <Badge variant={domainBadgeVariant[template.domain] ?? 'default'} className="self-start mb-3">
@@ -157,7 +256,7 @@ export default function TemplatesPage() {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                   </svg>
                 </span>
-              </button>
+              </div>
             ))}
           </div>
         )}
@@ -200,6 +299,68 @@ export default function TemplatesPage() {
             <Button type="submit" variant="primary" isLoading={isCreating}>Create Template</Button>
           </div>
         </form>
+      </Modal>
+
+      {/* Edit template modal */}
+      <Modal isOpen={!!editTemplate} onClose={closeEdit} title="Edit Template" size="md">
+        <form onSubmit={handleUpdate} className="space-y-4">
+          {editError && (
+            <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-700">{editError}</div>
+          )}
+          <Input
+            label="Template Name"
+            value={editForm.name}
+            onChange={(e) => setEditForm({ ...editForm, name: e.target.value })}
+            required
+            disabled={isUpdating}
+          />
+          <Select
+            label="Domain"
+            value={editForm.domain}
+            onChange={(e) => setEditForm({ ...editForm, domain: e.target.value })}
+            options={domainOptions}
+            disabled={isUpdating}
+          />
+          <div>
+            <label className="block text-sm font-medium text-gray-900 mb-2">Description</label>
+            <textarea
+              className="w-full px-3 py-2 rounded-lg border border-gray-300 text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              rows={3}
+              placeholder="Optional: Describe what this template is used for"
+              value={editForm.description}
+              onChange={(e) => setEditForm({ ...editForm, description: e.target.value })}
+              disabled={isUpdating}
+            />
+          </div>
+          <div className="flex justify-end gap-3 pt-2">
+            <Button type="button" variant="secondary" onClick={closeEdit} disabled={isUpdating}>Cancel</Button>
+            <Button type="submit" variant="primary" isLoading={isUpdating}>Save Changes</Button>
+          </div>
+        </form>
+      </Modal>
+
+      {/* Delete template modal */}
+      <Modal
+        isOpen={!!deleteTemplate}
+        onClose={() => { setDeleteTemplate(null); setDeleteError('') }}
+        title="Delete Template"
+        size="sm"
+      >
+        <div className="space-y-4">
+          <p className="text-sm text-gray-600">
+            Are you sure you want to delete <span className="font-semibold text-gray-900">{deleteTemplate?.name}</span>?
+            This cannot be undone. Existing assessments created from this template are not affected.
+          </p>
+          {deleteError && <p className="text-sm text-red-600">{deleteError}</p>}
+          <div className="flex justify-end gap-3">
+            <Button variant="secondary" onClick={() => { setDeleteTemplate(null); setDeleteError('') }} disabled={isDeleting}>
+              Cancel
+            </Button>
+            <Button variant="danger" onClick={handleDelete} isLoading={isDeleting}>
+              Delete
+            </Button>
+          </div>
+        </div>
       </Modal>
 
       {/* Use template modal */}
