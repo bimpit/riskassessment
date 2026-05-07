@@ -4,6 +4,54 @@ import Anthropic from '@anthropic-ai/sdk'
 
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
 
+export async function GET() {
+  try {
+    const supabase = await createClient()
+    const { data: { user } } = await supabase.auth.getUser()
+
+    if (!user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
+    const serviceRole = await createServiceRoleClient()
+    const serviceRoleAny = serviceRole as any
+
+    const { data: teamMember } = await serviceRoleAny
+      .from('team_members')
+      .select('team_id')
+      .eq('user_id', user.id)
+      .limit(1)
+      .single()
+
+    if (!teamMember) {
+      return NextResponse.json({ error: 'Team not found' }, { status: 404 })
+    }
+
+    const [subResult, countResult] = await Promise.all([
+      serviceRoleAny
+        .from('subscriptions')
+        .select('status')
+        .eq('team_id', teamMember.team_id)
+        .maybeSingle(),
+      serviceRoleAny
+        .from('audit_log')
+        .select('id', { count: 'exact', head: true })
+        .eq('team_id', teamMember.team_id)
+        .eq('entity_type', 'assessment')
+        .eq('action', 'ai_generated'),
+    ])
+
+    const isPro = subResult.data?.status === 'active'
+    const generationsUsed = countResult.count ?? 0
+    const canGenerate = isPro || generationsUsed < 1
+
+    return NextResponse.json({ canGenerate, isPro, generationsUsed })
+  } catch (error) {
+    const msg = error instanceof Error ? error.message : String(error)
+    return NextResponse.json({ error: msg }, { status: 500 })
+  }
+}
+
 export async function POST(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }

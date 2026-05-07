@@ -49,12 +49,17 @@ export default function AssessmentRisksPage() {
   useEffect(() => {
     const loadData = async () => {
       try {
-        const [assessmentRes, risksRes] = await Promise.all([
+        const [assessmentRes, risksRes, eligibilityRes] = await Promise.all([
           fetch(`/api/assessments/${assessmentId}`),
           fetch(`/api/risks?assessmentId=${assessmentId}`),
+          fetch(`/api/assessments/${assessmentId}/generate`),
         ])
         if (assessmentRes.ok) setAssessment(await assessmentRes.json())
         if (risksRes.ok) setRisks(await risksRes.json())
+        if (eligibilityRes.ok) {
+          const eligibility = await eligibilityRes.json()
+          if (eligibility?.canGenerate === false) setNeedsUpgrade(true)
+        }
       } finally {
         setIsLoading(false)
       }

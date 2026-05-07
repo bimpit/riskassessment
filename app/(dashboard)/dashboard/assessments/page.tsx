@@ -148,11 +148,11 @@ export default function AssessmentsPage() {
                     </td>
                     <td className="px-6 py-4 text-sm">
                       <div className="flex items-center gap-2">
-                        <Link href={`/dashboard/assessments/${assessment.id}`}>
+                        <Link href={`/dashboard/assessments/${assessment.id}/risks`}>
                           <Button variant="outline" size="sm">View</Button>
                         </Link>
-                        <Link href={`/dashboard/assessments/${assessment.id}/risks`}>
-                          <Button variant="secondary" size="sm">Risks</Button>
+                        <Link href={`/dashboard/assessments/${assessment.id}`}>
+                          <Button variant="secondary" size="sm">Edit</Button>
                         </Link>
                         <Button
                           variant="danger"
