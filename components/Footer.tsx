@@ -8,7 +8,7 @@ export function Footer() {
           <div className="flex flex-col gap-1.5">
             <span className="text-sm font-semibold text-[#0F172A]">Risk Assessment</span>
             <p className="text-xs text-gray-400">
-              Independent risk assessment services for Australian organisations.
+              Risk assessment software and services for Australian organisations.
             </p>
             <p className="text-xs text-gray-400">Australia</p>
             <a href="mailto:enquiries@risk-assessment.com.au" className="text-xs text-gray-500 hover:text-[#2563EB] transition-colors">
@@ -16,6 +16,13 @@ export function Footer() {
             </a>
           </div>
           <div className="flex flex-col gap-3">
+            <nav className="flex flex-wrap items-center gap-x-4 gap-y-2 text-xs text-gray-500">
+              <Link href="/risk-assessment-software" className="hover:text-[#2563EB] transition-colors">Risk Assessment Software</Link>
+              <span className="text-gray-300">·</span>
+              <Link href="/risk-management-software" className="hover:text-[#2563EB] transition-colors">Risk Management Software</Link>
+              <span className="text-gray-300">·</span>
+              <Link href="/risk-register-software" className="hover:text-[#2563EB] transition-colors">Risk Register Software</Link>
+            </nav>
             <nav className="flex flex-wrap items-center gap-x-4 gap-y-2 text-xs text-gray-500">
               <Link href="/risk-assessment-whs" className="hover:text-[#2563EB] transition-colors">WHS Risk Assessment</Link>
               <span className="text-gray-300">·</span>
