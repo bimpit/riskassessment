@@ -2,7 +2,7 @@ import type { Metadata, Viewport } from 'next'
 import Script from 'next/script'
 import './globals.css'
 
-const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://www.risk-assessment.com.au'
+const baseUrl = 'https://www.risk-assessment.com.au'
 
 const organizationJsonLd = {
   '@context': 'https://schema.org',
