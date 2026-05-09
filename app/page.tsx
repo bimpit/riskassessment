@@ -298,6 +298,12 @@ export default function Home() {
               </li>
             ))}
           </ul>
+          <p className="text-gray-600 text-sm mt-4">
+            For broader WHS compliance management beyond risk assessments, see{' '}
+            <a href="https://www.whsshield.com.au" className="text-blue-700 font-medium hover:underline">WHS Shield — work health and safety compliance software</a>.{' '}
+            Employers with employment law obligations alongside safety duties can also use{' '}
+            <a href="https://www.fairworkshield.com.au" className="text-blue-700 font-medium hover:underline">Fair Work Shield — Fair Work Act compliance software for employers</a>.
+          </p>
         </div>
       </section>
 
@@ -362,6 +368,31 @@ export default function Home() {
                 </span>
               </Link>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Related compliance tools */}
+      <section className="py-12 px-4 bg-white border-t border-gray-100">
+        <div className="max-w-4xl mx-auto">
+          <h2 className="text-lg font-semibold text-gray-800 mb-6">Related compliance tools</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <a href="https://www.getcompliai.com.au" className="bg-blue-50 border border-blue-100 rounded-xl p-5 hover:shadow-md transition-shadow group">
+              <h3 className="font-semibold text-gray-900 mb-1 group-hover:text-blue-700 transition-colors text-sm">CompliAI</h3>
+              <p className="text-xs text-gray-500">AI compliance platform for Australian businesses</p>
+            </a>
+            <a href="https://www.whsshield.com.au" className="bg-gray-50 border border-gray-200 rounded-xl p-5 hover:shadow-md transition-shadow group">
+              <h3 className="font-semibold text-gray-900 mb-1 group-hover:text-blue-700 transition-colors text-sm">WHS Shield</h3>
+              <p className="text-xs text-gray-500">Work health and safety compliance software</p>
+            </a>
+            <a href="https://www.fairworkshield.com.au" className="bg-gray-50 border border-gray-200 rounded-xl p-5 hover:shadow-md transition-shadow group">
+              <h3 className="font-semibold text-gray-900 mb-1 group-hover:text-blue-700 transition-colors text-sm">Fair Work Shield</h3>
+              <p className="text-xs text-gray-500">Fair Work Act compliance software for employers</p>
+            </a>
+            <a href="https://www.policywriter.com.au" className="bg-gray-50 border border-gray-200 rounded-xl p-5 hover:shadow-md transition-shadow group">
+              <h3 className="font-semibold text-gray-900 mb-1 group-hover:text-blue-700 transition-colors text-sm">Policy Writer</h3>
+              <p className="text-xs text-gray-500">AI-powered compliance policy generator</p>
+            </a>
           </div>
         </div>
       </section>
