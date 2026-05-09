@@ -18,7 +18,7 @@ export async function POST(request: NextRequest) {
     }
 
     await sendEmail({
-      to: 'enquiries@risk-assessment.com.au',
+      to: 'hello@getcompliai.com.au',
       replyTo: email,
       subject: `Risk assessment request from ${name}`,
       html: `
