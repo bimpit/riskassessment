@@ -16,13 +16,17 @@ export async function sendEmail({
   replyTo?: string
 }) {
   const resend = getResendClient()
-  return resend.emails.send({
+  const { data, error } = await resend.emails.send({
     from: process.env.RESEND_FROM_EMAIL || 'noreply@riskassessment.app',
     to,
     subject,
     html,
     ...(replyTo && { replyTo }),
   })
+  if (error) {
+    throw new Error(`Resend error: ${error.message}`)
+  }
+  return data
 }
 
 export async function sendAssessmentReminder(
