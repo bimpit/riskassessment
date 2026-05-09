@@ -44,6 +44,20 @@ export function Footer() {
           </div>
         </div>
 
+        <div className="mt-4 border-t border-gray-100 pt-4">
+          <p className="mb-3 text-xs font-medium uppercase tracking-wide text-gray-500">Our Compliance Tools</p>
+          <div className="flex flex-wrap gap-x-5 gap-y-1.5 text-xs text-gray-400">
+            <a href="https://www.getcompliai.com.au" className="hover:text-[#2563EB] transition-colors">CompliAI — AI compliance platform for Australian businesses</a>
+            <a href="https://www.amlshieldpro.com.au" className="hover:text-[#2563EB] transition-colors">AML Shield Pro — anti-money laundering compliance software</a>
+            <a href="https://www.whsshield.com.au" className="hover:text-[#2563EB] transition-colors">WHS Shield — work health and safety compliance software</a>
+            <a href="https://www.privacyactshieldpro.com.au" className="hover:text-[#2563EB] transition-colors">Privacy Act Shield Pro — Australian Privacy Act compliance software</a>
+            <a href="https://www.policywriter.com.au" className="hover:text-[#2563EB] transition-colors">Policy Writer — AI-powered compliance policy generator</a>
+            <a href="https://www.risk-assessment.com.au" className="hover:text-[#2563EB] transition-colors">Risk Assessment — online workplace risk assessment tool</a>
+            <a href="https://www.fairworkshield.com.au" className="hover:text-[#2563EB] transition-colors">Fair Work Shield — Fair Work Act compliance software for employers</a>
+            <a href="https://www.foodsafetylog.com.au" className="hover:text-[#2563EB] transition-colors">Food Safety Log — digital food safety compliance software</a>
+          </div>
+        </div>
+
         <div className="mt-6 border-t border-gray-200 pt-6 text-xs text-gray-400">
           <span>© 2026 Risk Assessment. All rights reserved. ABN 56 591 469 534.</span>
         </div>
