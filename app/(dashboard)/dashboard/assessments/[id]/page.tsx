@@ -74,7 +74,7 @@ export default function AssessmentDetailPage() {
         </Link>
         <div className="flex items-center gap-2">
           <Link href={`/dashboard/assessments/${assessmentId}/risks`}>
-            <Button variant="outline" size="sm">View Risks</Button>
+            <Button variant="outline" size="sm">Manage Risks</Button>
           </Link>
           <Link href={`/dashboard/assessments/${assessmentId}/report`}>
             <Button variant="primary" size="sm">Export PDF</Button>
