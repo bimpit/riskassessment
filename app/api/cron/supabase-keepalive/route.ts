@@ -4,27 +4,34 @@ import { NextRequest, NextResponse } from 'next/server'
 export const maxDuration = 60
 
 export async function GET(request: NextRequest) {
-  // Verify cron secret
-  const secret = request.nextUrl.searchParams.get('secret')
-  if (secret !== process.env.CRON_SECRET) {
+  // Vercel crons send CRON_SECRET as Authorization: Bearer <secret>
+  const cronSecret = process.env.CRON_SECRET;
+  if (cronSecret && request.headers.get('authorization') !== `Bearer ${cronSecret}`) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
   try {
-    // Connect to Supabase and run a simple query to keep connection alive
+    // Query a real table so Supabase registers database activity and doesn't pause the project.
+    // Service role key bypasses RLS so this always succeeds regardless of data.
     const supabase = await createServiceRoleClient()
-    const { count } = await supabase.from('profiles').select('*', { count: 'exact', head: true })
+    const { count, error } = await supabase
+      .from('profiles')
+      .select('id', { count: 'exact', head: true })
+
+    if (error) {
+      throw new Error(`Database query failed: ${error.message}`)
+    }
 
     return NextResponse.json({
       success: true,
-      message: 'Supabase connection kept alive',
+      message: 'Supabase keepalive executed',
       timestamp: new Date().toISOString(),
       profiles_count: count,
     })
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Keepalive error:', error)
     return NextResponse.json(
-      { error: 'Failed to keep alive' },
+      { error: 'Failed to execute keepalive', details: String(error) },
       { status: 500 }
     )
   }
