@@ -131,7 +131,7 @@ export default function AssessmentRisksPage() {
           <Link href={`/dashboard/assessments/${assessmentId}/report`}>
             <Button variant="secondary">Export PDF</Button>
           </Link>
-          <Button variant="primary" onClick={handleOpenGenerate}>Generate with AI</Button>
+          <Button variant="primary" onClick={handleOpenGenerate}>Generate Risks</Button>
         </div>
       </div>
 
@@ -166,7 +166,7 @@ export default function AssessmentRisksPage() {
               Cancel
             </Button>
             <Button variant="primary" onClick={handleGenerate} isLoading={isGenerating}>
-              Generate with AI
+              Generate Risks
             </Button>
           </div>
         </div>
@@ -201,7 +201,7 @@ export default function AssessmentRisksPage() {
               Use AI to generate a set of risks based on your workplace context, or add risks
               manually from the Risk Register.
             </p>
-            <Button variant="primary" onClick={handleOpenGenerate}>Generate with AI</Button>
+            <Button variant="primary" onClick={handleOpenGenerate}>Generate Risks</Button>
           </div>
         ) : (
           <div className="overflow-x-auto">
