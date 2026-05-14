@@ -36,7 +36,7 @@ export default function NewAssessmentPage() {
         return
       }
 
-      router.push(`/dashboard/assessments/${data.id}/risks`)
+      router.push(`/dashboard/assessments/${data.id}/report`)
     } catch (err) {
       setError('Failed to create assessment')
     } finally {

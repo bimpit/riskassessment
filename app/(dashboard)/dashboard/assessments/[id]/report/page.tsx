@@ -116,8 +116,8 @@ export default function AssessmentReportPage() {
   return (
     <div className="bg-gray-50 print:bg-white min-h-screen">
       <div className="print:hidden bg-white border-b border-gray-200 px-6 py-3 flex items-center justify-between sticky top-0 z-10">
-        <Link href={`/dashboard/assessments/${assessmentId}/risks`} className="text-sm text-blue-600 hover:text-blue-700">
-          ← Back to Risks
+        <Link href="/dashboard/assessments" className="text-sm text-blue-600 hover:text-blue-700">
+          ← Back to Assessments
         </Link>
         <Button variant="primary" onClick={() => window.print()}>Print / Save as PDF</Button>
       </div>
