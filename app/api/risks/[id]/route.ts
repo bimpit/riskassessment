@@ -54,8 +54,20 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
     }
 
     const sr = await createServiceRoleClient()
-    const { data, error } = await (sr as any).from('risks').update(updates).eq('id', id).eq('team_id', teamId).select().single()
+    const srAny = sr as any
+
+    const { data: existing } = await srAny.from('risks').select('*').eq('id', id).eq('team_id', teamId).single()
+    const { data, error } = await srAny.from('risks').update(updates).eq('id', id).eq('team_id', teamId).select().single()
     if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+
+    await srAny.from('audit_log').insert({
+      team_id: teamId,
+      user_id: user.id,
+      action: 'UPDATE',
+      entity_type: 'risks',
+      entity_id: id,
+      changes: { old: existing, new: data },
+    })
 
     return NextResponse.json(data)
   } catch {
@@ -74,8 +86,20 @@ export async function DELETE(request: NextRequest, { params }: { params: Promise
     if (!teamId) return NextResponse.json({ error: 'Team not found' }, { status: 404 })
 
     const sr = await createServiceRoleClient()
-    const { error } = await (sr as any).from('risks').delete().eq('id', id).eq('team_id', teamId)
+    const srAny = sr as any
+
+    const { data: existing } = await srAny.from('risks').select('*').eq('id', id).eq('team_id', teamId).single()
+    const { error } = await srAny.from('risks').delete().eq('id', id).eq('team_id', teamId)
     if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+
+    await srAny.from('audit_log').insert({
+      team_id: teamId,
+      user_id: user.id,
+      action: 'DELETE',
+      entity_type: 'risks',
+      entity_id: id,
+      changes: existing,
+    })
 
     return NextResponse.json({ success: true })
   } catch {

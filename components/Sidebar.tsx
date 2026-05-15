@@ -31,6 +31,11 @@ const navItems = [
     icon: '🕘',
   },
   {
+    href: '/dashboard/billing',
+    label: 'Billing',
+    icon: '💳',
+  },
+  {
     href: '/dashboard/settings',
     label: 'Settings',
     icon: '⚙️',

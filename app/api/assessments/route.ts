@@ -110,6 +110,15 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: error.message }, { status: 500 })
     }
 
+    await serviceRoleAny.from('audit_log').insert({
+      team_id: teamId,
+      user_id: user.id,
+      action: 'CREATE',
+      entity_type: 'assessments',
+      entity_id: data.id,
+      changes: data,
+    })
+
     return NextResponse.json(data, { status: 201 })
   } catch (error) {
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
