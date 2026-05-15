@@ -14,6 +14,7 @@ export default function SignupPage() {
   const [organization, setOrganization] = useState('')
   const [error, setError] = useState('')
   const [isLoading, setIsLoading] = useState(false)
+  const [successEmail, setSuccessEmail] = useState('')
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault()
@@ -23,15 +24,8 @@ export default function SignupPage() {
     try {
       const response = await fetch('/api/auth/signup', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          email,
-          password,
-          fullName,
-          organization,
-        }),
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password, fullName, organization }),
       })
 
       const data = await response.json()
@@ -41,18 +35,32 @@ export default function SignupPage() {
         return
       }
 
-      // Redirect to login - user needs to confirm email then sign in
-      const msg = data.emailSent === false
-        ? 'Account created! Confirmation email may take a few minutes — check your inbox then sign in.'
-        : 'Account created! Please check your email to confirm your account, then sign in.'
-      setTimeout(() => {
-        router.push(`/login?message=${encodeURIComponent(msg)}`)
-      }, 1000)
+      setSuccessEmail(email)
     } catch (err) {
       setError('An unexpected error occurred')
     } finally {
       setIsLoading(false)
     }
+  }
+
+  if (successEmail) {
+    return (
+      <div className="space-y-4 text-center">
+        <div className="p-4 bg-green-50 border border-green-200 rounded-lg">
+          <p className="text-green-800 font-medium">Account created!</p>
+          <p className="text-green-700 text-sm mt-1">
+            We sent a confirmation link to <strong>{successEmail}</strong>.
+            Please check your inbox and click the link to activate your account.
+          </p>
+        </div>
+        <p className="text-sm text-gray-500">
+          Didn&apos;t receive it? Check your spam folder.
+        </p>
+        <Link href="/login" className="block text-blue-600 hover:text-blue-700 text-sm font-medium">
+          Go to sign in
+        </Link>
+      </div>
+    )
   }
 
   return (

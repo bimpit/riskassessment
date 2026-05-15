@@ -24,7 +24,7 @@ export async function POST(request: Request) {
           full_name: fullName,
           organization,
         },
-        emailRedirectTo: `${siteUrl}/auth/callback`,
+        emailRedirectTo: `${siteUrl}/api/auth/callback`,
       },
     })
 
