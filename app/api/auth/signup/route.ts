@@ -58,16 +58,30 @@ export async function POST(request: Request) {
     const serviceRole = await createServiceRoleClient()
     const serviceRoleAny = serviceRole as any
 
-    // Create or update profile (upsert)
+    // Check if a profile with this email already exists
+    const { data: existingProfile } = await serviceRoleAny
+      .from('profiles')
+      .select('id')
+      .eq('email', email)
+      .maybeSingle()
+
+    if (existingProfile) {
+      return NextResponse.json(
+        { error: 'An account with this email already exists. Please sign in.' },
+        { status: 400 }
+      )
+    }
+
+    // Create profile
     const { error: profileError } = await serviceRoleAny
       .from('profiles')
-      .upsert({
+      .insert({
         id: signUpData.user.id,
         email,
         full_name: fullName,
         organization,
         role: 'user',
-      }, { onConflict: 'id' })
+      })
 
     if (profileError) {
       console.error('Profile creation error:', profileError)
