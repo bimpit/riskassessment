@@ -37,8 +37,8 @@ const navItems = [
   },
   {
     href: '/dashboard/settings',
-    label: 'Settings',
-    icon: '⚙️',
+    label: 'Profile',
+    icon: '👤',
   },
 ]
 
