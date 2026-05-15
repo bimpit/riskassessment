@@ -181,7 +181,7 @@ export default function BillingPage() {
                 ))}
               </ul>
               <Button
-                variant={plan.popular ? 'primary' : 'outline'}
+                variant={plan.id === 'free' ? 'outline' : 'primary'}
                 className="w-full"
                 onClick={() => handleCheckout(plan.id)}
                 isLoading={actionLoading === plan.id}
