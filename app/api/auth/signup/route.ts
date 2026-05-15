@@ -29,24 +29,29 @@ export async function POST(request: Request) {
     })
 
     if (signUpError) {
-      console.error('Supabase signUp error:', JSON.stringify(signUpError, null, 2))
-      const message = signUpError.message && signUpError.message !== '{}'
+      console.error('Supabase signUp error:', JSON.stringify({
+        message: signUpError.message,
+        status: signUpError.status,
+        name: signUpError.name,
+        code: (signUpError as any).code,
+      }, null, 2))
+    }
+
+    // Hard fail: no user created at all
+    if (!signUpData?.user) {
+      const message = signUpError?.message && signUpError.message !== '{}'
         ? signUpError.message
-        : 'Failed to send confirmation email. Please check your email address and try again.'
+        : 'Unable to create account. Please try again.'
       return NextResponse.json({ error: message }, { status: 400 })
     }
 
-    if (!signUpData.user) {
-      return NextResponse.json(
-        { error: 'Failed to create user' },
-        { status: 400 }
-      )
+    // Soft fail: user was created but confirmation email failed to send — still proceed
+    const emailFailed = !!signUpError
+    if (emailFailed) {
+      console.warn('User created but confirmation email failed. Proceeding with profile setup.')
     }
 
-    // Log signup info for debugging
-    console.log('SignUp successful:', {
-      user: signUpData.user?.email,
-    })
+    console.log('SignUp user created:', { email: signUpData.user.email, emailFailed })
 
     // Check if service role key is available
     if (!process.env.SUPABASE_SERVICE_ROLE_KEY) {
@@ -142,7 +147,7 @@ export async function POST(request: Request) {
     }
 
     return NextResponse.json(
-      { success: true, user: signUpData.user },
+      { success: true, user: signUpData.user, emailSent: !emailFailed },
       { status: 201 }
     )
   } catch (error) {

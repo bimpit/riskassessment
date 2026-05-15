@@ -41,9 +41,12 @@ export default function SignupPage() {
         return
       }
 
-      // Redirect to login - user needs to sign in with their new credentials
+      // Redirect to login - user needs to confirm email then sign in
+      const msg = data.emailSent === false
+        ? 'Account created! Confirmation email may take a few minutes — check your inbox then sign in.'
+        : 'Account created! Please check your email to confirm your account, then sign in.'
       setTimeout(() => {
-        router.push('/login?message=Account created! Please sign in.')
+        router.push(`/login?message=${encodeURIComponent(msg)}`)
       }, 1000)
     } catch (err) {
       setError('An unexpected error occurred')
