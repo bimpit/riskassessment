@@ -35,21 +35,27 @@ export async function POST(request: NextRequest) {
           .eq('stripe_subscription_id', subscription.id)
           .single()
 
+        const teamId = subscription.metadata?.team_id || null
+        const planName = subscription.items?.data[0]?.price?.nickname
+          || subscription.items?.data[0]?.plan?.nickname
+          || null
+
         if (existingSubscription) {
           await supabaseAny
             .from('subscriptions')
             .update({
               status: subscription.status,
-              plan: subscription.items?.data[0]?.plan?.product || null,
+              plan: planName,
               current_period_end: new Date(subscription.current_period_end * 1000).toISOString(),
             })
             .eq('id', existingSubscription.id)
         } else {
           await supabaseAny.from('subscriptions').insert({
+            team_id: teamId,
             stripe_customer_id: subscription.customer,
             stripe_subscription_id: subscription.id,
             status: subscription.status,
-            plan: subscription.items?.data[0]?.plan?.product || null,
+            plan: planName,
             current_period_end: new Date(subscription.current_period_end * 1000).toISOString(),
           })
         }

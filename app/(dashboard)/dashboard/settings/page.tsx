@@ -51,7 +51,6 @@ export default function SettingsPage() {
 
   return (
     <div className="p-8 max-w-2xl">
-      <h1 className="text-3xl font-bold text-gray-900 mb-8">Profile</h1>
       <div className="bg-white rounded-lg border border-gray-200 p-6 space-y-6">
         {savedSuccess && <div className="p-3 bg-green-50 border border-green-200 rounded text-sm text-green-700">Profile saved successfully.</div>}
         {saveError && <div className="p-3 bg-red-50 border border-red-200 rounded text-sm text-red-700">{saveError}</div>}

@@ -9,14 +9,10 @@ export function getStripeClient() {
 export const STRIPE_PLANS = {
   starter: {
     name: 'Starter',
-    assessments: 5,
-    users: 3,
-    priceId: process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY,
+    priceId: process.env.STRIPE_STARTER_PRICE_ID,
   },
   professional: {
     name: 'Professional',
-    assessments: 100,
-    users: 20,
     priceId: process.env.STRIPE_PROFESSIONAL_PRICE_ID,
   },
 }
