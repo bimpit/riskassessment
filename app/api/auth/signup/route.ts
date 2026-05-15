@@ -15,6 +15,7 @@ export async function POST(request: Request) {
 
     // Create user with Supabase Auth
     const supabase = await createClient()
+    const siteUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://www.risk-assessment.com.au'
     const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
       email,
       password,
@@ -23,14 +24,16 @@ export async function POST(request: Request) {
           full_name: fullName,
           organization,
         },
+        emailRedirectTo: `${siteUrl}/auth/callback`,
       },
     })
 
     if (signUpError) {
-      return NextResponse.json(
-        { error: signUpError.message },
-        { status: 400 }
-      )
+      console.error('Supabase signUp error:', JSON.stringify(signUpError, null, 2))
+      const message = signUpError.message && signUpError.message !== '{}'
+        ? signUpError.message
+        : 'Failed to send confirmation email. Please check your email address and try again.'
+      return NextResponse.json({ error: message }, { status: 400 })
     }
 
     if (!signUpData.user) {
