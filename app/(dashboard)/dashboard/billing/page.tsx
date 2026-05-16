@@ -21,19 +21,12 @@ const plans = [
     features: ['5 Assessments', '3 Team Members', 'Basic Reporting'],
   },
   {
-    id: 'starter',
-    name: 'Starter',
-    price: '$99',
-    period: '/mo',
-    features: ['50 Assessments', '10 Team Members', 'Advanced Reporting'],
-    popular: true,
-  },
-  {
     id: 'professional',
     name: 'Professional',
-    price: '$299',
+    price: 'A$59',
     period: '/mo',
-    features: ['Unlimited Assessments', 'Unlimited Team Members', 'Custom Reports', 'API Access'],
+    features: ['Unlimited Assessments', 'Unlimited Team Members', 'Advanced Reporting', 'API Access'],
+    popular: true,
   },
 ]
 
@@ -149,10 +142,10 @@ export default function BillingPage() {
             </p>
             <Button
               variant="primary"
-              onClick={() => handleCheckout('starter')}
-              isLoading={actionLoading === 'starter'}
+              onClick={() => handleCheckout('professional')}
+              isLoading={actionLoading === 'professional'}
             >
-              Upgrade to Starter
+              Upgrade to Professional
             </Button>
           </div>
         )}
