@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { Footer } from '@/components/Footer'
+import { PricingSection } from '@/components/PricingSection'
 import { Shield, CheckCircle, ArrowRight, FileText, Database, Zap, ClipboardList } from 'lucide-react'
 
 export const metadata: Metadata = {
@@ -109,6 +110,12 @@ export default function Home() {
           </div>
           <div className="flex items-center gap-4">
             <Link
+              href="#pricing"
+              className="text-sm font-medium text-gray-700 hover:text-blue-700 transition-colors"
+            >
+              Pricing
+            </Link>
+            <Link
               href="/login"
               className="text-sm font-medium text-gray-700 hover:text-blue-700 transition-colors"
             >
@@ -204,6 +211,11 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      {/* Pricing */}
+      <div id="pricing">
+        <PricingSection />
+      </div>
 
       {/* How it works */}
       <section id="how-it-works" className="py-16 px-4 bg-gray-50 border-t border-gray-200">
