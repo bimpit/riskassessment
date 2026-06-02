@@ -14,6 +14,7 @@ export function Footer() {
             <a href="mailto:enquiries@risk-assessment.com.au" className="text-xs text-gray-500 hover:text-[#2563EB] transition-colors">
               enquiries@risk-assessment.com.au
             </a>
+            <Link href="https://youtu.be/UNuX1KEDV0M" className="text-xs text-[#16A34A] hover:underline"> ▶ Watch Demo </Link>
           </div>
           <div className="flex flex-col gap-3">
             <nav className="flex flex-wrap items-center gap-x-4 gap-y-2 text-xs text-gray-500">
