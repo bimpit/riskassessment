@@ -160,7 +160,7 @@ export default function Home() {
           {/* ⭐ INSERT YOUTUBE LINK RIGHT HERE ⭐ */}
           <p className="mt-4">
             <a
-              href="https://youtu.be/11qJEf9Ng4o"
+              href="https://youtu.be/UNuX1KEDV0M"
               target="_blank"
               rel="noopener noreferrer"
               className="text-blue-600 underline"
