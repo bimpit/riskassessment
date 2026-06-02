@@ -156,6 +156,19 @@ export default function Home() {
               Talk to a Risk Advisor
             </Link>
           </div>
+
+          {/* ⭐ INSERT YOUTUBE LINK RIGHT HERE ⭐ */}
+          <p className="mt-4">
+            <a
+              href="https://youtu.be/11qJEf9Ng4o"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-blue-600 underline"
+            >
+              ▶ Watch our 2‑minute demo on YouTube
+            </a>
+          </p>
+
         </div>
       </section>
 
