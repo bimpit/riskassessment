@@ -135,11 +135,12 @@ export default function Home() {
       <section className="bg-gradient-to-b from-blue-50 to-white pt-20 pb-16 px-4">
         <div className="max-w-4xl mx-auto text-center">
           <h1 className="text-4xl sm:text-5xl font-extrabold text-gray-900 leading-tight mb-6">
-            Risk Assessment Software for Australian Businesses
+            WHS Risk Assessment Software for Australian Workplaces
           </h1>
           <p className="text-xl text-gray-600 mb-10 max-w-2xl mx-auto">
-            Create and manage risk assessments, build your risk register, and generate AI-assisted
-            WHS documentation — aligned to the WHS Act and ISO 31000.
+            Create compliant risk assessments, maintain a defensible risk register, and generate 
+            AI‑assisted WHS documentation — aligned to the WHS Act 2011, ISO 31000, and 
+            Safe Work Australia guidelines.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link
@@ -524,7 +525,7 @@ export default function Home() {
           <p className="text-blue-300 text-sm mt-4">No credit card required to start.</p>
         </div>
       </section>
-      
+
       {/* LONG‑FORM SEO BLOCK */}
       <section className="max-w-5xl mx-auto px-6 py-20 text-gray-700">
         <h2 className="text-2xl font-bold text-gray-900 mb-6">
