@@ -503,26 +503,32 @@ export default function Home() {
       {/* Final CTA */}
       <section className="bg-blue-700 text-white py-16 px-4">
         <div className="max-w-3xl mx-auto text-center">
-          <h2 className="text-3xl font-bold mb-4">Start managing risk today</h2>
+          <h2 className="text-3xl font-bold mb-4">Start Managing WHS Risk With Confidence</h2>
+
           <p className="text-blue-200 text-lg mb-8">
-            Free to start. Create your first risk assessment in minutes.
+            Create your first WHS risk assessment in minutes — free to start, aligned to the WHS Act 2011 and ISO 31000.
           </p>
+
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link
               href="/signup"
               className="inline-flex items-center justify-center gap-2 bg-white text-blue-700 font-semibold px-8 py-4 rounded-xl hover:bg-blue-50 transition-colors"
             >
-              Start Free
+              Start Free — No Credit Card
               <ArrowRight className="h-5 w-5" />
             </Link>
+
             <Link
               href="/contact"
               className="inline-flex items-center justify-center gap-2 border-2 border-white text-white font-semibold px-8 py-4 rounded-xl hover:bg-blue-600 transition-colors"
             >
-              Talk to a Risk Advisor
+              Speak With a WHS Advisor
             </Link>
           </div>
-          <p className="text-blue-300 text-sm mt-4">No credit card required to start.</p>
+
+          <p className="text-blue-300 text-sm mt-4">
+            No credit card required. Cancel anytime.
+          </p>
         </div>
       </section>
 
