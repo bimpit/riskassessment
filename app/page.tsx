@@ -258,6 +258,41 @@ export default function Home() {
         </div>
       </section>
 
+      {/* WHY CHOOSE US OVER TEMPLATES */}
+      <section className="max-w-5xl mx-auto px-6 py-20">
+        <h2 className="text-3xl font-bold text-gray-900 text-center mb-10">
+          Why Risk Assessment Beats Templates & Spreadsheets
+        </h2>
+
+        <div className="grid md:grid-cols-3 gap-10">
+
+          <div>
+            <p className="font-semibold text-gray-900 mb-2">Templates are generic</p>
+            <p className="text-sm text-gray-600">
+              SafeWork templates and Word documents don’t adapt to your industry, hazards, or controls.
+              Risk Assessment builds assessments aligned to WHS Act 2011 and ISO 31000.
+            </p>
+          </div>
+
+          <div>
+            <p className="font-semibold text-gray-900 mb-2">Spreadsheets break easily</p>
+            <p className="text-sm text-gray-600">
+              Excel risk registers become messy, inconsistent, and impossible to audit. Our platform
+              keeps everything structured, versioned, and inspection‑ready.
+            </p>
+          </div>
+
+          <div>
+            <p className="font-semibold text-gray-900 mb-2">Consultants are expensive</p>
+            <p className="text-sm text-gray-600">
+              Instead of paying thousands for one‑off assessments, generate unlimited assessments,
+              controls, and reports for a predictable monthly price.
+            </p>
+          </div>
+
+        </div>
+      </section>
+
       {/* Who it's for */}
       <section className="py-16 px-4 bg-white border-t border-gray-200">
         <div className="max-w-4xl mx-auto">
@@ -289,6 +324,61 @@ export default function Home() {
         </div>
       </section>
 
+      {/* INDUSTRIES WE SUPPORT */}
+      <section className="max-w-6xl mx-auto px-6 py-20">
+        <h2 className="text-3xl font-bold text-gray-900 text-center mb-12">
+          Industries We Support
+        </h2>
+
+        <p className="text-center text-gray-600 max-w-3xl mx-auto mb-12">
+          Risk Assessment is used across Australia by organisations that need defensible,
+          inspection‑ready WHS documentation aligned to ISO 31000 and the WHS Act 2011.
+        </p>
+
+        <div className="grid md:grid-cols-4 gap-10 text-center">
+
+          <div>
+            <p className="font-semibold text-gray-900 mb-2">Construction</p>
+            <p className="text-sm text-gray-600">High‑risk work, SWMS, site hazards, plant & equipment.</p>
+          </div>
+
+          <div>
+            <p className="font-semibold text-gray-900 mb-2">Manufacturing</p>
+            <p className="text-sm text-gray-600">Machinery, manual handling, chemicals, production lines.</p>
+          </div>
+
+          <div>
+            <p className="font-semibold text-gray-900 mb-2">Healthcare & NDIS</p>
+            <p className="text-sm text-gray-600">Client safety, infection control, clinical environments.</p>
+          </div>
+
+          <div>
+            <p className="font-semibold text-gray-900 mb-2">Trades & Contractors</p>
+            <p className="text-sm text-gray-600">Electrical, plumbing, HVAC, roofing, field work.</p>
+          </div>
+
+          <div>
+            <p className="font-semibold text-gray-900 mb-2">Logistics & Warehousing</p>
+            <p className="text-sm text-gray-600">Forklifts, traffic management, loading & unloading.</p>
+          </div>
+
+          <div>
+            <p className="font-semibold text-gray-900 mb-2">Education</p>
+            <p className="text-sm text-gray-600">School activities, excursions, workshops, facilities.</p>
+          </div>
+
+          <div>
+            <p className="font-semibold text-gray-900 mb-2">Hospitality</p>
+            <p className="text-sm text-gray-600">Kitchen safety, slips & trips, hazardous substances.</p>
+          </div>
+
+          <div>
+            <p className="font-semibold text-gray-900 mb-2">Professional Services</p>
+            <p className="text-sm text-gray-600">Office environments, ergonomics, client interactions.</p>
+          </div>
+
+        </div>
+      </section>
       {/* Approach & Standards */}
       <section className="py-16 px-4 bg-gray-50 border-t border-gray-200">
         <div className="max-w-4xl mx-auto">
@@ -434,7 +524,73 @@ export default function Home() {
           <p className="text-blue-300 text-sm mt-4">No credit card required to start.</p>
         </div>
       </section>
+      
+      {/* LONG‑FORM SEO BLOCK */}
+      <section className="max-w-5xl mx-auto px-6 py-20 text-gray-700">
+        <h2 className="text-2xl font-bold text-gray-900 mb-6">
+          WHS Risk Assessment Software for Australian Organisations
+        </h2>
 
+        <p className="mb-4">
+          Risk Assessment is purpose‑built for Australian businesses that need defensible, 
+          inspection‑ready WHS documentation aligned to the <strong>WHS Act 2011</strong>, 
+          <strong> ISO 31000</strong>, and Safe Work Australia guidelines. Our platform helps PCBUs, 
+          directors, safety managers, and frontline teams identify hazards, assess risks, 
+          implement controls, and maintain a compliant risk register without relying on 
+          spreadsheets or generic templates.
+        </p>
+
+        <p className="mb-4">
+          Whether you operate in <strong>construction</strong>, <strong>manufacturing</strong>, 
+          <strong>healthcare</strong>, <strong>NDIS</strong>, <strong>logistics</strong>, 
+          <strong>education</strong>, or <strong>professional services</strong>, Risk Assessment 
+          adapts to your industry and work environment. Every assessment is structured around 
+          likelihood, consequence, and the hierarchy of controls, ensuring your documentation 
+          meets regulatory expectations and supports officer due diligence.
+        </p>
+
+        <h3 className="text-xl font-semibold text-gray-900 mt-10 mb-4">
+          Why Australian Businesses Choose Risk Assessment
+        </h3>
+
+        <p className="mb-4">
+          Traditional risk assessments created in Word or Excel are difficult to maintain, 
+          inconsistent across teams, and often fail to meet audit requirements. Risk Assessment 
+          solves this by providing a centralised, structured, and version‑controlled platform 
+          that keeps your risk register accurate, accessible, and aligned to WHS legislation.
+        </p>
+
+        <p className="mb-4">
+          Organisations use Risk Assessment to prepare for internal audits, external inspections, 
+          accreditation processes, and incident investigations. With clear hazard identification, 
+          control measures, and automated reporting, teams can demonstrate compliance quickly 
+          and maintain a defensible safety management system.
+        </p>
+
+        <h3 className="text-xl font-semibold text-gray-900 mt-10 mb-4">
+          Built for Compliance, Designed for Simplicity
+        </h3>
+
+        <p className="mb-4">
+          Risk Assessment is designed for teams without dedicated WHS specialists. The platform 
+          guides users through each step of the risk assessment process, ensuring hazards are 
+          identified, risks are evaluated, and controls are documented in a clear and compliant 
+          format. Reports can be exported instantly for audits, client requirements, or internal 
+          reviews.
+        </p>
+
+        <p className="mb-4">
+          From hazard identification to risk registers, corrective actions, and WHS documentation, 
+          Risk Assessment provides a complete solution that grows with your organisation. Start 
+          with a single assessment or manage risk across multiple sites — the platform adapts to 
+          your needs.
+        </p>
+
+        <p className="mt-8 text-sm text-gray-500">
+          Risk Assessment is part of the CompliAI Suite, supporting Australian organisations with 
+          WHS, Fair Work, Privacy, AML/CTF, and operational compliance.
+        </p>
+      </section>
       <Footer />
     </div>
   )
