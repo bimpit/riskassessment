@@ -28,16 +28,21 @@ export default function SignupPage() {
         body: JSON.stringify({ email, password, fullName, organization }),
       })
 
-      const data = await response.json()
+      let data: { error?: string } = {}
+      try {
+        data = await response.json()
+      } catch {
+        // Response was not JSON (e.g. HTML error page)
+      }
 
       if (!response.ok) {
-        setError(data.error || 'An unexpected error occurred')
+        setError(data.error || 'An unexpected error occurred. Please try again.')
         return
       }
 
       setSuccessEmail(email)
     } catch (err) {
-      setError('An unexpected error occurred')
+      setError('An unexpected error occurred. Please try again.')
     } finally {
       setIsLoading(false)
     }

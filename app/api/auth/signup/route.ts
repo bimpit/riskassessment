@@ -39,9 +39,16 @@ export async function POST(request: Request) {
 
     // Hard fail: no user created at all
     if (!signUpData?.user) {
-      const message = signUpError?.message && signUpError.message !== '{}'
-        ? signUpError.message
-        : 'Unable to create account. Please try again.'
+      const rawMessage = signUpError?.message || ''
+      const isTechnicalError =
+        !rawMessage ||
+        rawMessage === '{}' ||
+        rawMessage.includes('<!DOCTYPE') ||
+        rawMessage.includes('Unexpected token') ||
+        rawMessage.includes('not valid JSON')
+      const message = isTechnicalError
+        ? 'Unable to create account. Please try again later.'
+        : rawMessage
       return NextResponse.json({ error: message }, { status: 400 })
     }
 
@@ -155,7 +162,7 @@ export async function POST(request: Request) {
     const errorMessage = error instanceof Error ? error.message : String(error)
     console.error('Error details:', errorMessage)
     return NextResponse.json(
-      { error: `Server error: ${errorMessage}` },
+      { error: 'An unexpected error occurred. Please try again.' },
       { status: 500 }
     )
   }
