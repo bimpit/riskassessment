@@ -10,7 +10,7 @@
     },
     {
       "path": "/api/cron/supabase-keepalive",
-      "schedule": "0 2 */4 * *"
+      "schedule": "0 2 * * *"
     }
   ]
 }
