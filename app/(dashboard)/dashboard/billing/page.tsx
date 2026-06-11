@@ -14,19 +14,26 @@ interface Subscription {
 
 const plans = [
   {
-    id: 'free',
-    name: 'Free',
-    price: '$0',
-    period: '',
-    features: ['5 Assessments', '3 Team Members', 'Basic Reporting'],
+    id: 'starter',
+    name: 'Starter',
+    price: '$59',
+    period: '/mo',
+    features: ['1 organisation', '1 admin', 'Unlimited risk assessments'],
   },
   {
     id: 'professional',
     name: 'Professional',
-    price: 'A$59',
+    price: '$99',
     period: '/mo',
-    features: ['Unlimited Assessments', 'Unlimited Team Members', 'Advanced Reporting', 'API Access'],
+    features: ['Everything in Starter', 'Multi-admin', 'Templates', 'Reporting'],
     popular: true,
+  },
+  {
+    id: 'advisory',
+    name: 'Advisory',
+    price: '$199',
+    period: '/mo',
+    features: ['Multi-client', 'White-label', 'Priority support'],
   },
 ]
 
@@ -46,7 +53,6 @@ export default function BillingPage() {
   }, [])
 
   const handleCheckout = async (planId: string) => {
-    if (planId === 'free') return
     setActionLoading(planId)
     setError('')
     try {
@@ -174,13 +180,12 @@ export default function BillingPage() {
                 ))}
               </ul>
               <Button
-                variant={plan.id === 'free' ? 'outline' : 'primary'}
+                variant="primary"
                 className="w-full"
                 onClick={() => handleCheckout(plan.id)}
                 isLoading={actionLoading === plan.id}
-                disabled={plan.id === 'free'}
               >
-                {plan.id === 'free' ? 'Current Plan' : `Choose ${plan.name}`}
+                {`Choose ${plan.name}`}
               </Button>
             </div>
           ))}
