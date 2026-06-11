@@ -109,14 +109,6 @@ export default function DashboardPage() {
     }
   }
 
-  if (isLoading) {
-    return (
-      <div className="flex items-center justify-center h-full">
-        <Spinner />
-      </div>
-    )
-  }
-
   const deleteTarget = assessments.find((a) => a.id === deleteId)
 
   const riskSummary = useMemo<RiskSummary>(() => ({
@@ -143,6 +135,14 @@ export default function DashboardPage() {
       .sort((a, b) => daysFromNow(a.due_date!) - daysFromNow(b.due_date!)),
     [risks]
   )
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center h-full">
+        <Spinner />
+      </div>
+    )
+  }
 
   return (
     <div className="p-8 space-y-8">
