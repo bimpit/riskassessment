@@ -5,9 +5,6 @@ import {
   Table,
   TableCell,
   TableRow,
-  TextRun,
-  UnderlineType,
-  BorderStyle,
 } from 'docx'
 import { getRiskLevel } from './risk-scoring'
 
@@ -22,7 +19,7 @@ export async function generateRiskRegisterDocx(
     owner: string | null
     status: string
   }>
-): Promise<Buffer> {
+): Promise<Uint8Array<ArrayBuffer>> {
   const rows: TableRow[] = [
     new TableRow({
       children: [
@@ -77,5 +74,5 @@ export async function generateRiskRegisterDocx(
     ],
   })
 
-  return await Packer.toBuffer(doc)
+  return new Uint8Array(await Packer.toBuffer(doc)) as Uint8Array<ArrayBuffer>
 }
