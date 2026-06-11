@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useMemo } from 'react'
 import { Button } from '@/components/ui/Button'
 import { Badge } from '@/components/ui/Badge'
 import { Modal } from '@/components/ui/Modal'
@@ -61,13 +61,6 @@ function daysFromNow(dateStr: string): number {
 export default function DashboardPage() {
   const [assessments, setAssessments] = useState<Assessment[]>([])
   const [risks, setRisks] = useState<Risk[]>([])
-  const [riskSummary, setRiskSummary] = useState<RiskSummary>({
-    critical: 0,
-    high: 0,
-    medium: 0,
-    low: 0,
-    total: 0,
-  })
   const [isLoading, setIsLoading] = useState(true)
   const [deleteId, setDeleteId] = useState<string | null>(null)
   const [isDeleting, setIsDeleting] = useState(false)
@@ -89,13 +82,6 @@ export default function DashboardPage() {
         if (risksRes.ok) {
           const risksData: Risk[] = await risksRes.json()
           setRisks(risksData)
-          setRiskSummary({
-            critical: risksData.filter((r) => r.risk_level === 'critical').length,
-            high: risksData.filter((r) => r.risk_level === 'high').length,
-            medium: risksData.filter((r) => r.risk_level === 'medium').length,
-            low: risksData.filter((r) => r.risk_level === 'low').length,
-            total: risksData.length,
-          })
         }
       } finally {
         setIsLoading(false)
@@ -133,16 +119,30 @@ export default function DashboardPage() {
 
   const deleteTarget = assessments.find((a) => a.id === deleteId)
 
-  const overdue = risks
-    .filter((r) => r.status !== 'closed' && r.due_date && daysFromNow(r.due_date) < 0)
-    .sort((a, b) => daysFromNow(a.due_date!) - daysFromNow(b.due_date!))
-  const dueSoon = risks
-    .filter((r) => {
-      if (r.status === 'closed' || !r.due_date) return false
-      const d = daysFromNow(r.due_date)
-      return d >= 0 && d <= 7
-    })
-    .sort((a, b) => daysFromNow(a.due_date!) - daysFromNow(b.due_date!))
+  const riskSummary = useMemo<RiskSummary>(() => ({
+    critical: risks.filter((r) => r.risk_level === 'critical').length,
+    high: risks.filter((r) => r.risk_level === 'high').length,
+    medium: risks.filter((r) => r.risk_level === 'medium').length,
+    low: risks.filter((r) => r.risk_level === 'low').length,
+    total: risks.length,
+  }), [risks])
+
+  const overdue = useMemo(() =>
+    risks
+      .filter((r) => r.status !== 'closed' && r.due_date && daysFromNow(r.due_date) < 0)
+      .sort((a, b) => daysFromNow(a.due_date!) - daysFromNow(b.due_date!)),
+    [risks]
+  )
+  const dueSoon = useMemo(() =>
+    risks
+      .filter((r) => {
+        if (r.status === 'closed' || !r.due_date) return false
+        const d = daysFromNow(r.due_date)
+        return d >= 0 && d <= 7
+      })
+      .sort((a, b) => daysFromNow(a.due_date!) - daysFromNow(b.due_date!)),
+    [risks]
+  )
 
   return (
     <div className="p-8 space-y-8">

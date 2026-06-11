@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
 import { Select } from '@/components/ui/Select'
 import { Spinner } from '@/components/ui/Spinner'
+import { RichTextEditor } from '@/components/ui/RichTextEditor'
 import Link from 'next/link'
 
 interface Assessment {
@@ -88,7 +89,10 @@ export default function AssessmentDetailPage() {
         <Input label="Title" value={assessment.title} onChange={(e) => setAssessment({ ...assessment, title: e.target.value })} />
         <div>
           <label className="block text-sm font-medium text-gray-900 mb-2">Description</label>
-          <textarea className="w-full px-3 py-2 rounded-lg border border-gray-300 text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500" rows={4} value={assessment.description || ''} onChange={(e) => setAssessment({ ...assessment, description: e.target.value })} />
+          <RichTextEditor
+            value={assessment.description || ''}
+            onChange={(html) => setAssessment({ ...assessment, description: html })}
+          />
         </div>
         <Select label="Domain" value={assessment.domain} onChange={(e) => setAssessment({ ...assessment, domain: e.target.value })} options={[{ value: 'whs', label: 'WHS' }, { value: 'aml', label: 'AML' }, { value: 'privacy', label: 'Privacy' }, { value: 'fairwork', label: 'Fair Work' }, { value: 'operational', label: 'Operational' }]} />
         <Select label="Status" value={assessment.status} onChange={(e) => setAssessment({ ...assessment, status: e.target.value })} options={[{ value: 'draft', label: 'Draft' }, { value: 'in_progress', label: 'In Progress' }, { value: 'completed', label: 'Completed' }, { value: 'archived', label: 'Archived' }]} />

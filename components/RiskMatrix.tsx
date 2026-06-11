@@ -1,4 +1,4 @@
-import { Fragment } from 'react'
+import { Fragment, memo, useMemo } from 'react'
 import { calculateRiskScore, getRiskLevel } from '@/lib/risk-scoring'
 
 interface MatrixRisk {
@@ -36,14 +36,17 @@ function cellClass(level: string): string {
   }
 }
 
-export function RiskMatrix({ risks }: RiskMatrixProps) {
-  const counts: Record<string, number> = {}
-  for (const r of risks) {
-    const l = Math.max(1, Math.min(5, Math.round(r.likelihood)))
-    const c = Math.max(1, Math.min(5, Math.round(r.consequence)))
-    const key = `${l}-${c}`
-    counts[key] = (counts[key] ?? 0) + 1
-  }
+export const RiskMatrix = memo(function RiskMatrix({ risks }: RiskMatrixProps) {
+  const counts = useMemo(() => {
+    const result: Record<string, number> = {}
+    for (const r of risks) {
+      const l = Math.max(1, Math.min(5, Math.round(r.likelihood)))
+      const c = Math.max(1, Math.min(5, Math.round(r.consequence)))
+      const key = `${l}-${c}`
+      result[key] = (result[key] ?? 0) + 1
+    }
+    return result
+  }, [risks])
 
   const likelihoodRows = [5, 4, 3, 2, 1]
   const consequenceCols = [1, 2, 3, 4, 5]
@@ -124,4 +127,4 @@ export function RiskMatrix({ risks }: RiskMatrixProps) {
       </div>
     </div>
   )
-}
+})

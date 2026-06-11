@@ -7,6 +7,7 @@ import { Input } from '@/components/ui/Input'
 import { Select } from '@/components/ui/Select'
 import { Spinner } from '@/components/ui/Spinner'
 import { Modal } from '@/components/ui/Modal'
+import { RichTextEditor } from '@/components/ui/RichTextEditor'
 import { calculateRiskScore, getRiskLevel, getLikelihoodLabel, getConsequenceLabel } from '@/lib/risk-scoring'
 import Link from 'next/link'
 
@@ -277,7 +278,10 @@ export default function RiskDetailPage() {
         <Input label="Title" value={risk.title} onChange={(e) => setRisk({ ...risk, title: e.target.value })} />
         <div>
           <label className="block text-sm font-medium text-gray-900 mb-2">Description</label>
-          <textarea className="w-full px-3 py-2 rounded-lg border border-gray-300 text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500" rows={4} value={risk.description || ''} onChange={(e) => setRisk({ ...risk, description: e.target.value })} />
+          <RichTextEditor
+            value={risk.description || ''}
+            onChange={(html) => setRisk({ ...risk, description: html })}
+          />
         </div>
 
         <div className="border border-gray-200 rounded-lg p-4 space-y-4">
@@ -367,7 +371,9 @@ export default function RiskDetailPage() {
               <li key={control.id} className="py-3 flex items-start justify-between gap-4">
                 <div className="flex-1">
                   <p className="font-medium text-gray-900">{control.title}</p>
-                  {control.description && <p className="text-sm text-gray-600 mt-0.5">{control.description}</p>}
+                  {control.description && (
+                    <div className="text-sm text-gray-600 mt-0.5 prose prose-sm max-w-none" dangerouslySetInnerHTML={{ __html: control.description }} />
+                  )}
                   <p className="text-xs text-gray-500 mt-1">
                     <span className="capitalize">{control.type}</span> · Effectiveness: {control.effectiveness}% · <span className="capitalize">{control.status}</span>
                   </p>
@@ -395,11 +401,9 @@ export default function RiskDetailPage() {
           />
           <div>
             <label className="block text-sm font-medium text-gray-900 mb-2">Description</label>
-            <textarea
-              className="w-full px-3 py-2 rounded-lg border border-gray-300 text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              rows={3}
+            <RichTextEditor
               value={controlForm.description}
-              onChange={(e) => setControlForm({ ...controlForm, description: e.target.value })}
+              onChange={(html) => setControlForm({ ...controlForm, description: html })}
               disabled={isSavingControl}
             />
           </div>

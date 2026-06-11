@@ -5,6 +5,7 @@ import { useState, FormEvent } from 'react'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
 import { Select } from '@/components/ui/Select'
+import { RichTextEditor } from '@/components/ui/RichTextEditor'
 
 export default function NewAssessmentPage() {
   const router = useRouter()
@@ -66,12 +67,10 @@ export default function NewAssessmentPage() {
 
         <div>
           <label className="block text-sm font-medium text-gray-900 mb-2">Description</label>
-          <textarea
-            className="w-full px-3 py-2 rounded-lg border border-gray-300 text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            rows={4}
-            placeholder="Optional: Provide context for this assessment"
+          <RichTextEditor
             value={formData.description}
-            onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+            onChange={(html) => setFormData({ ...formData, description: html })}
+            placeholder="Optional: Provide context for this assessment"
             disabled={isLoading}
           />
         </div>

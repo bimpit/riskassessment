@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useMemo } from 'react'
 import { useParams } from 'next/navigation'
 import Link from 'next/link'
 import { Spinner } from '@/components/ui/Spinner'
@@ -105,13 +105,21 @@ export default function AssessmentReportPage() {
   if (isLoading) return <div className="flex items-center justify-center h-full"><Spinner /></div>
   if (!assessment) return <div className="flex items-center justify-center h-full"><p className="text-gray-600">Assessment not found</p></div>
 
-  const sortedRisks = [...risks].sort((a, b) => b.risk_score - a.risk_score)
-  const counts = {
+  const sortedRisks = useMemo(() => [...risks].sort((a, b) => b.risk_score - a.risk_score), [risks])
+  const counts = useMemo(() => ({
     critical: risks.filter(r => r.risk_level === 'critical').length,
     high: risks.filter(r => r.risk_level === 'high').length,
     medium: risks.filter(r => r.risk_level === 'medium').length,
     low: risks.filter(r => r.risk_level === 'low').length,
-  }
+  }), [risks])
+  const controlsByRisk = useMemo(() => {
+    const map: Record<string, Control[]> = {}
+    controls.forEach((c) => {
+      if (!map[c.risk_id]) map[c.risk_id] = []
+      map[c.risk_id].push(c)
+    })
+    return map
+  }, [controls])
 
   return (
     <div className="bg-gray-50 print:bg-white min-h-screen">
@@ -119,7 +127,15 @@ export default function AssessmentReportPage() {
         <Link href="/dashboard/assessments" className="text-sm text-blue-600 hover:text-blue-700">
           ← Back to Assessments
         </Link>
-        <Button variant="primary" onClick={() => window.print()}>Print / Save as PDF</Button>
+        <div className="flex items-center gap-2">
+          <a href={`/api/reports/${assessmentId}/pdf`} download>
+            <Button variant="outline">Download PDF</Button>
+          </a>
+          <a href={`/api/reports/${assessmentId}/docx`} download>
+            <Button variant="outline">Download Word</Button>
+          </a>
+          <Button variant="primary" onClick={() => window.print()}>Print / Save as PDF</Button>
+        </div>
       </div>
 
       <div className="max-w-4xl mx-auto p-8 print:p-0 print:max-w-none">
@@ -127,7 +143,9 @@ export default function AssessmentReportPage() {
           <header className="border-b border-gray-300 pb-6">
             <p className="text-xs uppercase tracking-wider text-gray-500 mb-2">Risk Assessment Report</p>
             <h1 className="text-3xl font-bold text-gray-900">{assessment.title}</h1>
-            {assessment.description && <p className="mt-2 text-gray-700">{assessment.description}</p>}
+            {assessment.description && (
+              <div className="mt-2 text-gray-700 prose prose-sm max-w-none" dangerouslySetInnerHTML={{ __html: assessment.description }} />
+            )}
             <div className="mt-4 grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
               <div>
                 <p className="text-gray-500">Domain</p>
@@ -191,7 +209,7 @@ export default function AssessmentReportPage() {
             ) : (
               <div className="space-y-4">
                 {sortedRisks.map((risk, idx) => {
-                  const riskControls = controls.filter((c) => c.risk_id === risk.id)
+                  const riskControls = controlsByRisk[risk.id] ?? []
                   const rL = risk.notes?.residual_likelihood
                   const rC = risk.notes?.residual_consequence
                   const hasResidual = typeof rL === 'number' && typeof rC === 'number'
@@ -208,7 +226,9 @@ export default function AssessmentReportPage() {
                           {risk.risk_level} · {risk.risk_score}
                         </span>
                       </div>
-                      {risk.description && <p className="text-sm text-gray-700 mb-3">{risk.description}</p>}
+                      {risk.description && (
+                        <div className="text-sm text-gray-700 mb-3 prose prose-sm max-w-none" dangerouslySetInnerHTML={{ __html: risk.description }} />
+                      )}
 
                       <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-sm border-t border-gray-100 pt-3">
                         <div>
@@ -259,7 +279,9 @@ export default function AssessmentReportPage() {
                             {riskControls.map((control) => (
                               <li key={control.id} className="text-sm">
                                 <p className="font-medium text-gray-900">{control.title}</p>
-                                {control.description && <p className="text-gray-600 text-xs">{control.description}</p>}
+                                {control.description && (
+                                  <div className="text-gray-600 text-xs prose prose-xs max-w-none" dangerouslySetInnerHTML={{ __html: control.description }} />
+                                )}
                                 <p className="text-xs text-gray-500 mt-1">
                                   Type: <span className="capitalize">{control.type}</span> · Effectiveness: {control.effectiveness}% · Status: <span className="capitalize">{control.status}</span>
                                 </p>

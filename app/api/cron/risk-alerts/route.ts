@@ -26,26 +26,34 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ message: 'No critical risks' })
     }
 
-    // Get assessment owners and send alerts
+    // Batch fetch assessments and profiles (avoids N+1 — 3 queries total)
+    const assessmentIds = [...new Set((risks as any[]).map((r) => r.assessment_id))]
+    const { data: assessments } = await supabaseAny
+      .from('assessments')
+      .select('id, created_by')
+      .in('id', assessmentIds)
+
+    const userIds = [...new Set((assessments ?? []).map((a: any) => a.created_by).filter(Boolean))]
+    const { data: profiles } = userIds.length
+      ? await supabaseAny.from('profiles').select('id, email').in('id', userIds)
+      : { data: [] }
+
+    const assessmentMap: Record<string, string> = {}
+    for (const a of assessments ?? []) {
+      assessmentMap[a.id] = a.created_by
+    }
+    const profileMap: Record<string, string> = {}
+    for (const p of profiles ?? []) {
+      profileMap[p.id] = p.email
+    }
+
     let sent = 0
     for (const risk of risks as any[]) {
-      const { data: assessment } = await supabaseAny
-        .from('assessments')
-        .select('created_by')
-        .eq('id', risk.assessment_id)
-        .single()
-
-      if (assessment?.created_by) {
-        const { data: user } = await supabaseAny
-          .from('profiles')
-          .select('email')
-          .eq('id', assessment.created_by)
-          .single()
-
-        if (user?.email) {
-          await sendRiskAlert(user.email, risk.title, risk.risk_level)
-          sent++
-        }
+      const createdBy = assessmentMap[risk.assessment_id]
+      const email = createdBy ? profileMap[createdBy] : undefined
+      if (email) {
+        await sendRiskAlert(email, risk.title, risk.risk_level)
+        sent++
       }
     }
 
