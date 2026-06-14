@@ -1,3 +1,5 @@
+"use client"
+
 import { useState } from "react"
 import { createClient } from "@supabase/supabase-js"
 
@@ -14,7 +16,7 @@ export default function SendMagicLinkPage() {
     const { error } = await supabase.auth.signInWithOtp({
       email,
       options: {
-        emailRedirectTo: "https://risk-assessment.com.au/auth/callback"
+        emailRedirectTo: "https://www.risk-assessment.com.au/auth/callback"
       }
     })
 
