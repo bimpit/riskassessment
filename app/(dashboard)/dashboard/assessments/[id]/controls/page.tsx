@@ -5,8 +5,7 @@ import { useParams } from 'next/navigation'
 import { Spinner } from '@/components/ui/Spinner'
 
 export default function ControlsPage() {
-  const params = useParams()
-  const assessmentId = params.id as string
+  const { id: assessmentId } = useParams() as { id: string }
   const [controls, setControls] = useState<any[]>([])
   const [isLoading, setIsLoading] = useState(true)
 
