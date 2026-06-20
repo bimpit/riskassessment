@@ -101,35 +101,7 @@ export default function Home() {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(softwareJsonLd) }} />
 
-      {/* Header */}
-      <header className="border-b border-gray-100 bg-white sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <Shield className="h-7 w-7 text-blue-700" />
-            <span className="text-xl font-bold text-blue-700">Risk Assessment</span>
-          </div>
-          <div className="flex items-center gap-4">
-            <Link
-              href="#pricing"
-              className="text-sm font-medium text-gray-700 hover:text-blue-700 transition-colors"
-            >
-              Pricing
-            </Link>
-            <Link
-              href="/login"
-              className="text-sm font-medium text-gray-700 hover:text-blue-700 transition-colors"
-            >
-              Login
-            </Link>
-            <Link
-              href="/signup"
-              className="text-sm font-medium bg-blue-700 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors"
-            >
-              Start Free
-            </Link>
-          </div>
-        </div>
-      </header>
+      
 
       {/* Hero */}
       <section className="bg-gradient-to-b from-blue-50 to-white pt-20 pb-16 px-4">
@@ -598,7 +570,6 @@ export default function Home() {
           WHS, Fair Work, Privacy, AML/CTF, and operational compliance.
         </p>
       </section>
-      <Footer />
     </div>
   )
 }

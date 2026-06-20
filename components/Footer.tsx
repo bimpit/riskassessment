@@ -3,65 +3,67 @@ import Link from "next/link"
 export function Footer() {
   return (
     <footer className="border-t border-gray-200 bg-[#F8FAFC]">
-      <div className="mx-auto max-w-7xl px-6 py-10 lg:px-8">
-        <div className="flex flex-col gap-6 sm:flex-row sm:items-start sm:justify-between">
+      <div className="mx-auto max-w-7xl px-6 py-12 lg:px-8">
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10">
+
+          {/* Brand */}
           <div className="flex flex-col gap-1.5">
             <span className="text-sm font-semibold text-[#0F172A]">Risk Assessment</span>
-            <p className="text-xs text-gray-400">
-              Risk assessment software and services for Australian organisations.
+            <p className="text-xs text-gray-500">
+              WHS risk assessment software for Australian organisations.
             </p>
-            <p className="text-xs text-gray-400">Australia</p>
-            <a href="mailto:enquiries@risk-assessment.com.au" className="text-xs text-gray-500 hover:text-[#2563EB] transition-colors">
-              enquiries@risk-assessment.com.au
+            <p className="text-xs text-gray-500">Hosted in Australia · No lock‑in · Cancel anytime</p>
+            <a
+              href="mailto:riskassessment@getcompliai.com.au"
+              className="text-xs text-gray-600 hover:text-blue-700 transition-colors"
+            >
+              riskassessment@getcompliai.com.au
             </a>
-            <Link href="https://youtu.be/UNuX1KEDV0M" className="text-xs text-[#16A34A] hover:underline"> ▶ Watch Demo </Link>
           </div>
-          <div className="flex flex-col gap-3">
-            <nav className="flex flex-wrap items-center gap-x-4 gap-y-2 text-xs text-gray-500">
-              <Link href="/risk-assessment-software" className="hover:text-[#2563EB] transition-colors">Risk Assessment Software</Link>
-              <span className="text-gray-300">·</span>
-              <Link href="/risk-management-software" className="hover:text-[#2563EB] transition-colors">Risk Management Software</Link>
-              <span className="text-gray-300">·</span>
-              <Link href="/risk-register-software" className="hover:text-[#2563EB] transition-colors">Risk Register Software</Link>
-            </nav>
-            <nav className="flex flex-wrap items-center gap-x-4 gap-y-2 text-xs text-gray-500">
-              <Link href="/risk-assessment-whs" className="hover:text-[#2563EB] transition-colors">WHS Risk Assessment</Link>
-              <span className="text-gray-300">·</span>
-              <Link href="/whs-risk-assessment" className="hover:text-[#2563EB] transition-colors">WHS Risk Assessment Service</Link>
-              <span className="text-gray-300">·</span>
-              <Link href="/risk-assessment-template" className="hover:text-[#2563EB] transition-colors">Risk Assessment Template</Link>
-              <span className="text-gray-300">·</span>
-              <Link href="/risk-assessment-process" className="hover:text-[#2563EB] transition-colors">Our Process</Link>
-            </nav>
-            <nav className="flex flex-wrap items-center gap-x-4 gap-y-2 text-xs text-gray-500">
-              <Link href="/privacy" className="hover:text-[#2563EB] transition-colors">Privacy Policy</Link>
-              <span className="text-gray-300">·</span>
-              <Link href="/terms" className="hover:text-[#2563EB] transition-colors">Terms of Service</Link>
-              <span className="text-gray-300">·</span>
-              <Link href="/security" className="hover:text-[#2563EB] transition-colors">Security</Link>
-              <span className="text-gray-300">·</span>
-              <Link href="/contact" className="hover:text-[#2563EB] transition-colors">Contact</Link>
-            </nav>
+
+          {/* Product */}
+          <div>
+            <h4 className="text-sm font-semibold text-[#0F172A] mb-3">Product</h4>
+            <ul className="space-y-2 text-xs text-gray-600">
+              <li><Link href="/#how-it-works" className="hover:text-blue-700">How it works</Link></li>
+              <li><Link href="/#pricing" className="hover:text-blue-700">Pricing</Link></li>
+              <li><Link href="/signup" className="hover:text-blue-700">Start Free</Link></li>
+              <li><Link href="/login" className="hover:text-blue-700">Login</Link></li>
+            </ul>
           </div>
+
+          {/* Resources */}
+          <div>
+            <h4 className="text-sm font-semibold text-[#0F172A] mb-3">Resources</h4>
+            <ul className="space-y-2 text-xs text-gray-600">
+              <li><Link href="/risk-assessment-software" className="hover:text-blue-700">Risk Assessment Software</Link></li>
+              <li><Link href="/risk-register-software" className="hover:text-blue-700">Risk Register</Link></li>
+              <li><Link href="/risk-assessment-template" className="hover:text-blue-700">Templates</Link></li>
+              <li><Link href="/contact" className="hover:text-blue-700">Contact Support</Link></li>
+            </ul>
+          </div>
+
+          {/* Legal */}
+          <div>
+            <h4 className="text-sm font-semibold text-[#0F172A] mb-3">Legal</h4>
+            <ul className="space-y-2 text-xs text-gray-600">
+              <li><Link href="/privacy" className="hover:text-blue-700">Privacy Policy</Link></li>
+              <li><Link href="/terms" className="hover:text-blue-700">Terms of Service</Link></li>
+              <li><Link href="/security" className="hover:text-blue-700">Security</Link></li>
+            </ul>
+          </div>
+
         </div>
 
-        <div className="mt-4 border-t border-gray-100 pt-4">
-          <p className="mb-3 text-xs font-medium uppercase tracking-wide text-gray-500">Our Compliance Tools</p>
-          <div className="flex flex-wrap gap-x-5 gap-y-1.5 text-xs text-gray-400">
-            <a href="https://www.getcompliai.com.au" className="hover:text-[#2563EB] transition-colors">CompliAI — AI compliance platform for Australian businesses</a>
-            <a href="https://www.amlshieldpro.com.au" className="hover:text-[#2563EB] transition-colors">AML Shield Pro — anti-money laundering compliance software</a>
-            <a href="https://www.whsshield.com.au" className="hover:text-[#2563EB] transition-colors">WHS Shield — work health and safety compliance software</a>
-            <a href="https://www.privacyactshieldpro.com.au" className="hover:text-[#2563EB] transition-colors">Privacy Act Shield Pro — Australian Privacy Act compliance software</a>
-            <a href="https://www.policywriter.com.au" className="hover:text-[#2563EB] transition-colors">Policy Writer — AI-powered compliance policy generator</a>
-            <a href="https://www.risk-assessment.com.au" className="hover:text-[#2563EB] transition-colors">Risk Assessment — online workplace risk assessment tool</a>
-            <a href="https://www.fairworkshield.com.au" className="hover:text-[#2563EB] transition-colors">Fair Work Shield — Fair Work Act compliance software for employers</a>
-            <a href="https://www.foodsafetylog.com.au" className="hover:text-[#2563EB] transition-colors">Food Safety Log — digital food safety compliance software</a>
-          </div>
+        {/* Disclaimer */}
+        <div className="mt-10 border-t border-gray-200 pt-6 text-xs text-gray-500">
+          <p className="mb-3">
+            Risk Assessment provides structured WHS documentation and general information only. It does not provide legal advice.
+          </p>
+          <p className="text-gray-500">© 2026 Risk Assessment · Part of the Compliai Suite</p>
         </div>
 
-        <div className="mt-6 border-t border-gray-200 pt-6 text-xs text-gray-400">
-          <span>© 2026 Risk Assessment. All rights reserved. ABN 56 591 469 534.</span>
-        </div>
       </div>
     </footer>
   )
