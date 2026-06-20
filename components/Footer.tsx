@@ -30,6 +30,18 @@ export function Footer() {
               <li><Link href="/#pricing" className="hover:text-blue-700">Pricing</Link></li>
               <li><Link href="/signup" className="hover:text-blue-700">Start Free</Link></li>
               <li><Link href="/login" className="hover:text-blue-700">Login</Link></li>
+
+              {/* ⭐ Watch Demo link restored */}
+              <li>
+                <a
+                  href="https://youtu.be/UNuX1KEDV0M"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:text-blue-700"
+                >
+                  ▶ Watch Demo
+                </a>
+              </li>
             </ul>
           </div>
 
