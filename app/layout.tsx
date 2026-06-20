@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from 'next'
 import Script from 'next/script'
 import './globals.css'
+import { headers } from 'next/headers'
 import { Header } from '@/components/Header'
 import { Footer } from '@/components/Footer'   // if you want global footer too
 
@@ -65,7 +66,12 @@ export const viewport: Viewport = {
 
 const gaId = process.env.NEXT_PUBLIC_GA_ID
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  const headersList = await headers()
+  const pathname = headersList.get('x-pathname') ?? '/'
+  const APP_PATHS = ['/dashboard', '/login', '/signup', '/auth']
+  const isAppPage = APP_PATHS.some(p => pathname.startsWith(p))
+
   return (
     <html lang="en" suppressHydrationWarning>
 
@@ -191,9 +197,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </head>
 
       <body>
-        <Header />
+        {!isAppPage && <Header />}
         {children}
-        <Footer />
+        {!isAppPage && <Footer />}
 
         {gaId && (
           <>

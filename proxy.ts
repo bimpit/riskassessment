@@ -63,6 +63,7 @@ export async function proxy(request: NextRequest) {
     return NextResponse.next({ request: { headers: request.headers } })
   }
 
+  supabaseResponse.headers.set('x-pathname', request.nextUrl.pathname)
   return supabaseResponse
 }
 
