@@ -13,7 +13,9 @@ export function Footer() {
             <p className="text-xs text-gray-500">
               WHS risk assessment software for Australian organisations.
             </p>
-            <p className="text-xs text-gray-500">Hosted in Australia · No lock‑in · Cancel anytime</p>
+            <p className="text-xs text-gray-500">
+              Hosted in Australia · No lock‑in contracts · Cancel anytime
+            </p>
             <a
               href="mailto:riskassessment@getcompliai.com.au"
               className="text-xs text-gray-600 hover:text-blue-700 transition-colors"
@@ -31,7 +33,7 @@ export function Footer() {
               <li><Link href="/signup" className="hover:text-blue-700">Start Free</Link></li>
               <li><Link href="/login" className="hover:text-blue-700">Login</Link></li>
 
-              {/* ⭐ Watch Demo link restored */}
+              {/* Watch Demo */}
               <li>
                 <a
                   href="https://youtu.be/UNuX1KEDV0M"
@@ -49,10 +51,26 @@ export function Footer() {
           <div>
             <h4 className="text-sm font-semibold text-[#0F172A] mb-3">Resources</h4>
             <ul className="space-y-2 text-xs text-gray-600">
-              <li><Link href="/risk-assessment-software" className="hover:text-blue-700">Risk Assessment Software</Link></li>
-              <li><Link href="/risk-register-software" className="hover:text-blue-700">Risk Register</Link></li>
-              <li><Link href="/risk-assessment-template" className="hover:text-blue-700">Templates</Link></li>
-              <li><Link href="/contact" className="hover:text-blue-700">Contact Support</Link></li>
+              <li>
+                <Link href="/risk-assessment-software" className="hover:text-blue-700">
+                  Risk Assessment Software
+                </Link>
+              </li>
+              <li>
+                <Link href="/risk-register-software" className="hover:text-blue-700">
+                  Risk Register
+                </Link>
+              </li>
+              <li>
+                <Link href="/risk-assessment-template" className="hover:text-blue-700">
+                  Templates
+                </Link>
+              </li>
+              <li>
+                <Link href="/contact" className="hover:text-blue-700">
+                  Contact Support
+                </Link>
+              </li>
             </ul>
           </div>
 
@@ -71,9 +89,12 @@ export function Footer() {
         {/* Disclaimer */}
         <div className="mt-10 border-t border-gray-200 pt-6 text-xs text-gray-500">
           <p className="mb-3">
-            Risk Assessment provides structured WHS documentation and general information only. It does not provide legal advice.
+            Risk Assessment provides structured WHS documentation and general information only.
+            It does not provide legal advice.
           </p>
-          <p className="text-gray-500">© 2026 Risk Assessment · Part of the Compliai Suite</p>
+          <p className="text-gray-500">
+            © 2026 Risk Assessment · Part of the CompliAI Suite
+          </p>
         </div>
 
       </div>

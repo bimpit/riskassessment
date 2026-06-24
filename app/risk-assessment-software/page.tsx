@@ -14,30 +14,72 @@ import {
 } from 'lucide-react'
 
 export const metadata: Metadata = {
-  title: 'Risk Assessment Software for Australian Businesses | Risk Assessment Tool',
+  title: "WHS Risk Assessment Software | ISO 31000 Risk Register for Australian Businesses",
   description:
-    'Online risk assessment software and tool for Australian businesses. Create WHS risk assessments, manage your risk register, and generate AI-assisted documentation. Free to start.',
+    "Create compliant WHS risk assessments and maintain a centralised ISO 31000‑aligned risk register. Built for Australian PCBUs, SMEs, and project teams under the WHS Act 2011 and Safe Work Australia guidance.",
+  keywords: [
+    "WHS risk assessment software",
+    "ISO 31000 risk register",
+    "WHS Act 2011",
+    "risk management software Australia",
+    "hazard identification",
+    "hierarchy of controls",
+    "Safe Work Australia",
+    "PCBU obligations",
+  ],
   alternates: {
-    canonical: '/risk-assessment-software',
+    canonical: "/risk-assessment-software",
   },
-}
+  openGraph: {
+    title: "WHS Risk Assessment Software for Australian Businesses",
+    description:
+      "Create WHS risk assessments, maintain a defensible risk register, and generate inspection‑ready documentation aligned to the WHS Act 2011 and ISO 31000.",
+    url: "https://www.risk-assessment.com.au/risk-assessment-software",
+    siteName: "Risk Assessment",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "WHS Risk Assessment Software",
+    description:
+      "ISO 31000‑aligned WHS risk assessment software for Australian organisations.",
+  },
+};
+
 
 const softwareJsonLd = {
-  '@context': 'https://schema.org',
-  '@type': 'SoftwareApplication',
-  name: 'Risk Assessment Software',
-  applicationCategory: 'BusinessApplication',
-  operatingSystem: 'Web',
-  offers: {
-    '@type': 'Offer',
-    price: '0',
-    priceCurrency: 'AUD',
-    description: 'Free tier available. Pro plan for unlimited AI-assisted assessments.',
-  },
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  name: "Risk Assessment",
+  applicationCategory: "BusinessApplication",
+  operatingSystem: "Web",
+  url: "https://www.risk-assessment.com.au/risk-assessment-software",
   description:
-    'Risk assessment software for Australian businesses. Create and manage risk assessments, maintain a risk register, and generate AI-assisted WHS documentation aligned to ISO 31000 and the WHS Act.',
-  url: 'https://www.risk-assessment.com.au/risk-assessment-software',
-}
+    "WHS risk assessment software aligned to the WHS Act 2011 and ISO 31000. Create compliant assessments, maintain a risk register, and export inspection‑ready documentation.",
+  screenshot: "https://www.risk-assessment.com.au/opengraph-image",
+  offers: {
+    "@type": "Offer",
+    price: "0",
+    priceCurrency: "AUD",
+    description:
+      "Free tier available. Pro plan includes unlimited AI‑assisted WHS risk assessments and full risk register functionality.",
+  },
+  featureList: [
+    "Create WHS risk assessments aligned to the WHS Act 2011",
+    "AI‑assisted hazard identification and control suggestions",
+    "Centralised WHS risk register with status tracking",
+    "ISO 31000‑aligned risk matrix and scoring",
+    "Inspection‑ready WHS documentation export",
+    "Industry‑specific templates for Australian workplaces",
+  ],
+  audience: {
+    "@type": "BusinessAudience",
+    audienceType:
+      "Australian businesses, PCBUs, SMEs, WHS managers, project teams",
+  },
+};
+
+
 
 export default function RiskAssessmentSoftware() {
   return (
@@ -70,16 +112,22 @@ export default function RiskAssessmentSoftware() {
         </div>
       </header>
 
+
       <main className="max-w-4xl mx-auto px-4 py-16">
+
+        {/* HERO */}
         <div className="mb-12">
           <h1 className="text-4xl sm:text-5xl font-extrabold text-gray-900 mb-6">
-            Risk Assessment Software for Australian Businesses
+            WHS Risk Assessment Software for Australian Businesses
           </h1>
+
           <p className="text-xl text-gray-600 mb-8">
-            An online risk assessment tool and risk management platform designed for Australian PCBUs,
-            SMEs, and project teams. Create WHS-compliant risk assessments, maintain a centralised risk
-            register, and produce inspection-ready documentation — all in one place.
+            A WHS risk assessment and risk management platform built for Australian PCBUs, SMEs, and
+            project teams. Create compliant WHS risk assessments, maintain a centralised risk register,
+            and generate inspection‑ready documentation aligned to the <strong>WHS Act 2011</strong>,
+            <strong> ISO 31000</strong>, and <strong>Safe Work Australia</strong> guidance.
           </p>
+
           <div className="flex flex-col sm:flex-row gap-4">
             <Link
               href="/signup"
@@ -88,6 +136,7 @@ export default function RiskAssessmentSoftware() {
               Start Free
               <ArrowRight className="h-5 w-5" />
             </Link>
+
             <Link
               href="/contact"
               className="inline-flex items-center justify-center gap-2 bg-white border-2 border-gray-200 hover:border-blue-700 text-gray-700 font-semibold px-8 py-4 rounded-xl text-lg transition-colors"
@@ -97,35 +146,41 @@ export default function RiskAssessmentSoftware() {
           </div>
         </div>
 
+        {/* WHAT SOFTWARE DOES */}
         <section className="mb-12">
           <h2 className="text-2xl font-bold text-gray-900 mb-4">
             What risk assessment software does
           </h2>
+
           <p className="text-gray-600 mb-4">
-            Risk assessment software replaces manual spreadsheets and generic templates with a structured,
-            guided process for identifying hazards, assessing risk, and documenting controls. Instead of
-            starting from a blank form, you work through a methodology aligned to the WHS Act and ISO
-            31000 — with the software prompting you at each step.
+            Risk assessment software replaces spreadsheets and generic templates with a structured,
+            guided process for identifying hazards, assessing risks, and documenting controls. Instead of
+            starting from a blank form, you follow a methodology aligned to the <strong>WHS Act 2011</strong>
+            and <strong>ISO 31000</strong> — with prompts at each step to ensure nothing is missed.
           </p>
+
           <p className="text-gray-600 mb-4">
-            The result is documentation that reflects your specific workplace, operations, and controls —
-            not a filled-in template. That distinction matters to regulators, auditors, and insurers.
+            The result is documentation tailored to your workplace, operations, and control measures —
+            not a generic template. This distinction matters to regulators, auditors, and insurers.
           </p>
+
           <p className="text-gray-600">
-            For Australian businesses with WHS obligations, risk assessment software provides the
-            structure, methodology, and records management needed to demonstrate ongoing compliance — and
-            to respond quickly when a regulator or insurer asks for evidence.
+            For Australian businesses with WHS obligations, risk assessment software provides the structure,
+            methodology, and records management needed to demonstrate ongoing compliance and respond quickly
+            when a regulator or insurer requests evidence.
           </p>
         </section>
 
+        {/* FEATURES */}
         <section className="mb-12">
           <h2 className="text-2xl font-bold text-gray-900 mb-6">Key features</h2>
+
           <div className="grid sm:grid-cols-2 gap-5">
             {[
               {
                 icon: <FileText className="w-5 h-5 text-blue-700" />,
                 title: 'Risk Assessment Creation',
-                desc: 'Create structured risk assessments for any workplace, project, or activity. Step-by-step guidance aligned to WHS Act requirements and the hierarchy of controls.',
+                desc: 'Create structured WHS risk assessments for any workplace, project, or activity. Step‑by‑step guidance aligned to WHS Act requirements and the hierarchy of controls.',
               },
               {
                 icon: <Database className="w-5 h-5 text-blue-700" />,
@@ -135,22 +190,22 @@ export default function RiskAssessmentSoftware() {
               {
                 icon: <Zap className="w-5 h-5 text-blue-700" />,
                 title: 'AI Risk Generation',
-                desc: 'Use AI to generate risk scenarios and suggested controls based on your workplace type and activities. Trained on WHS requirements and Australian industry risk patterns.',
+                desc: 'Use AI to generate hazard scenarios and suggested controls based on your workplace type and activities. Trained on WHS requirements and Australian industry risk patterns.',
               },
               {
                 icon: <ClipboardList className="w-5 h-5 text-blue-700" />,
                 title: 'Industry Templates',
-                desc: 'Start from a template matched to your industry — construction, healthcare, hospitality, logistics, and more. Customise to your specific operations.',
+                desc: 'Start from templates matched to your industry — construction, healthcare, hospitality, logistics, and more. Customise to your specific operations.',
               },
               {
                 icon: <BarChart2 className="w-5 h-5 text-blue-700" />,
                 title: 'Risk Matrix and Scoring',
-                desc: 'Built-in risk matrix aligned to Safe Work Australia guidance. Likelihood and consequence ratings produce a risk score that drives prioritisation.',
+                desc: 'Built‑in risk matrix aligned to Safe Work Australia guidance. Likelihood and consequence ratings generate a risk score for prioritisation.',
               },
               {
                 icon: <Lock className="w-5 h-5 text-blue-700" />,
-                title: 'Inspection-Ready Export',
-                desc: 'Export risk assessment reports in a format suitable for regulator review, incident investigation, insurer assessment, and management reporting.',
+                title: 'Inspection‑Ready Export',
+                desc: 'Export WHS risk assessment reports suitable for regulator review, incident investigation, insurer assessment, and management reporting.',
               },
             ].map((feature) => (
               <div key={feature.title} className="bg-gray-50 border border-gray-200 rounded-xl p-5">
@@ -162,27 +217,29 @@ export default function RiskAssessmentSoftware() {
           </div>
         </section>
 
+        {/* WHO USES IT */}
         <section className="mb-12">
           <h2 className="text-2xl font-bold text-gray-900 mb-4">
             Who uses this risk assessment tool
           </h2>
+
           <div className="space-y-4">
             {[
               {
                 title: 'PCBUs and company directors',
-                desc: 'Meet your WHS Act duty of care and officer due diligence obligations. The software produces documentation that demonstrates risks were genuinely identified and managed — not just filled in.',
+                desc: 'Meet WHS Act duty of care and officer due diligence obligations. Produce documentation that demonstrates hazards were identified and risks were genuinely managed.',
               },
               {
                 title: 'SMEs and small business owners',
-                desc: 'A practical, affordable risk assessment tool that guides you through the process without needing a dedicated WHS team. Produces the same quality of documentation that larger organisations use.',
+                desc: 'A practical, affordable WHS risk assessment tool that guides you through the process without needing a dedicated safety team.',
               },
               {
                 title: 'Project managers and site supervisors',
-                desc: 'Create project-specific risk assessments, track control implementation, and maintain a risk register across multiple sites or projects.',
+                desc: 'Create project‑specific risk assessments, track control implementation, and maintain a risk register across multiple sites.',
               },
               {
                 title: 'WHS and safety managers',
-                desc: 'Centralise risk documentation across your organisation. Review, update, and report on risk assessments from a single dashboard.',
+                desc: 'Centralise WHS risk documentation across your organisation. Review, update, and report on assessments from a single dashboard.',
               },
             ].map((item) => (
               <div key={item.title} className="flex items-start gap-3">
@@ -196,14 +253,17 @@ export default function RiskAssessmentSoftware() {
           </div>
         </section>
 
+        {/* WHS + ISO ALIGNMENT */}
         <section className="mb-12 bg-gray-50 border border-gray-200 rounded-xl p-6">
           <h2 className="text-2xl font-bold text-gray-900 mb-4">
             WHS Act and ISO 31000 alignment
           </h2>
+
           <p className="text-gray-600 mb-4">
-            The risk assessment software is built on the risk management principles in ISO 31000 and the
-            methodological requirements of the WHS Act 2011. Every assessment follows a structured process:
+            The software is built on ISO 31000 risk management principles and the methodological requirements
+            of the WHS Act 2011. Every assessment follows a structured process:
           </p>
+
           <ul className="space-y-3">
             {[
               'Hazard identification specific to your workplace and operations',
@@ -220,12 +280,15 @@ export default function RiskAssessmentSoftware() {
           </ul>
         </section>
 
+        {/* CTA */}
         <section className="bg-blue-700 text-white rounded-xl p-8 text-center mb-12">
           <h2 className="text-2xl font-bold mb-3">Start your first risk assessment</h2>
+
           <p className="text-blue-200 mb-6">
-            Free to start. Create a risk assessment in minutes and see your risk register populate
+            Free to start. Create a WHS risk assessment in minutes and see your risk register populate
             automatically.
           </p>
+
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link
               href="/signup"
@@ -234,6 +297,7 @@ export default function RiskAssessmentSoftware() {
               Start Free
               <ArrowRight className="h-5 w-5" />
             </Link>
+
             <Link
               href="/contact"
               className="inline-flex items-center justify-center gap-2 border-2 border-white text-white font-semibold px-8 py-3 rounded-xl hover:bg-blue-600 transition-colors"
@@ -241,11 +305,14 @@ export default function RiskAssessmentSoftware() {
               Talk to a Risk Advisor
             </Link>
           </div>
+
           <p className="text-blue-300 text-sm mt-4">No credit card required.</p>
         </section>
 
+        {/* RELATED LINKS */}
         <div className="border-t border-gray-200 pt-8">
           <p className="text-sm font-medium text-gray-500 mb-4">Related resources</p>
+
           <div className="flex flex-col sm:flex-row gap-4">
             <Link href="/risk-management-software" className="text-blue-700 hover:underline text-sm">
               Risk Management Software →
@@ -261,7 +328,9 @@ export default function RiskAssessmentSoftware() {
             </Link>
           </div>
         </div>
+
       </main>
+
 
       <Footer />
     </div>
