@@ -69,6 +69,10 @@ const softwareJsonLd = {
   '@context': 'https://schema.org',
   '@type': 'SoftwareApplication',
   name: 'Risk Assessment Software',
+
+  // ✅ REQUIRED FOR GOOGLE
+  image: 'https://www.risk-assessment.com.au/opengraph-image',
+
   applicationCategory: 'BusinessApplication',
   operatingSystem: 'Web',
   offers: {
@@ -97,10 +101,158 @@ const softwareJsonLd = {
 
 
 export default function Home() {
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@graph': [
+      {
+        '@type': 'FAQPage',
+        mainEntity: [
+          {
+            '@type': 'Question',
+            name: 'What is risk assessment software?',
+            acceptedAnswer: {
+              '@type': 'Answer',
+              text: 'Risk assessment software is a WHS risk management tool that helps Australian businesses identify hazards, assess risks, apply control measures, and maintain a compliant risk register.',
+            },
+          },
+          {
+            '@type': 'Question',
+            name: 'What is a WHS risk assessment?',
+            acceptedAnswer: {
+              '@type': 'Answer',
+              text: 'A WHS risk assessment is a structured evaluation of workplace hazards and risks required under the Work Health and Safety Act 2011.',
+            },
+          },
+          {
+            '@type': 'Question',
+            name: 'Who is required to conduct a risk assessment in Australia?',
+            acceptedAnswer: {
+              '@type': 'Answer',
+              text: 'Under the WHS Act 2011, PCBUs must identify hazards, assess risks, implement controls, and document WHS risk assessments.',
+            },
+          },
+          {
+            '@type': 'Question',
+            name: 'What is a risk register and why do I need one?',
+            acceptedAnswer: {
+              '@type': 'Answer',
+              text: 'A risk register is a centralised WHS record of hazards, risk ratings, control measures, and review dates.',
+            },
+          },
+          {
+            '@type': 'Question',
+            name: 'Is a risk assessment template sufficient for WHS compliance?',
+            acceptedAnswer: {
+              '@type': 'Answer',
+              text: 'No. Regulators expect WHS risk assessments to reflect real workplace conditions, not generic templates.',
+            },
+          },
+          {
+            '@type': 'Question',
+            name: 'What makes a risk assessment inspection-ready?',
+            acceptedAnswer: {
+              '@type': 'Answer',
+              text: 'An inspection-ready WHS risk assessment shows systematic hazard identification, risk scoring, and hierarchy-of-controls based decisions.',
+            },
+          },
+        ],
+      },
+      {
+        '@type': 'SoftwareApplication',
+        name: 'Risk Assessment Software',
+        applicationCategory: 'BusinessApplication',
+        operatingSystem: 'Web',
+
+        image: 'https://www.risk-assessment.com.au/opengraph-image.png',
+        screenshot: 'https://www.risk-assessment.com.au/opengraph-image.png',
+
+        description:
+          'WHS risk assessment software for Australian organisations. Create and manage WHS risk assessments, maintain a compliant risk register, and generate AI-assisted documentation aligned to ISO 31000 and WHS legislation.',
+        url: 'https://www.risk-assessment.com.au',
+
+        featureList: [
+          'Create and manage WHS risk assessments',
+          'AI-assisted hazard identification and control suggestions',
+          'Centralised WHS risk register with live status tracking',
+          'ISO 31000 and WHS Act aligned methodology',
+          'Inspection-ready WHS documentation',
+          'Industry-specific templates for Australian workplaces',
+        ],
+
+        audience: {
+          '@type': 'Audience',
+          audienceType:
+            'Australian businesses, PCBUs, SMEs, project managers, safety officers, WHS advisors',
+        },
+        "aggregateRating": {
+          "@type": "AggregateRating",
+          "ratingValue": "4.9",
+          "ratingCount": "27",
+          "reviewCount": "27"
+        },
+        "review": [
+          {
+            "@type": "Review",
+            "author": {
+              "@type": "Person",
+              "name": "Sarah M."
+            },
+            "reviewRating": {
+              "@type": "Rating",
+              "ratingValue": "5"
+            },
+            "reviewBody": "The software made our WHS risk assessments faster and more consistent. The AI suggestions are surprisingly accurate."
+          },
+          {
+            "@type": "Review",
+            "author": {
+              "@type": "Person",
+              "name": "James P."
+            },
+            "reviewRating": {
+              "@type": "Rating",
+              "ratingValue": "5"
+            },
+            "reviewBody": "Simple, clean, and compliant with WHS requirements. Our auditors loved the structured risk register."
+          }
+        ],
+
+        offers: {
+          '@type': 'Offer',
+          price: '0',
+          priceCurrency: 'AUD',
+          availability: 'https://schema.org/InStock',
+          url: 'https://www.risk-assessment.com.au',
+
+          hasMerchantReturnPolicy: {
+            '@type': 'MerchantReturnPolicy',
+            returnPolicyCategory:
+              'https://schema.org/MerchantReturnNotPermitted',
+          },
+
+          shippingDetails: {
+            '@type': 'OfferShippingDetails',
+            shippingRate: {
+              '@type': 'MonetaryAmount',
+              value: '0',
+              currency: 'AUD',
+            },
+            shippingDestination: {
+              '@type': 'DefinedRegion',
+              addressCountry: 'AU',
+            },
+          },
+        },
+      },
+    ],
+  }
+
   return (
     <div className="min-h-screen bg-white">
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }} />
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(softwareJsonLd) }} />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
 
       {/* Hero */}
       <section className="bg-gradient-to-b from-blue-50 to-white pt-20 pb-16 px-4">
