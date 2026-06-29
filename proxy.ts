@@ -7,7 +7,10 @@ export async function proxy(request: NextRequest) {
     return NextResponse.next({ request })
   }
 
-  let supabaseResponse = NextResponse.next({ request })
+  const requestHeaders = new Headers(request.headers)
+  requestHeaders.set('x-pathname', request.nextUrl.pathname)
+
+  let supabaseResponse = NextResponse.next({ request: { headers: requestHeaders } })
 
   try {
     const supabase = createServerClient(
@@ -63,7 +66,6 @@ export async function proxy(request: NextRequest) {
     return NextResponse.next({ request: { headers: request.headers } })
   }
 
-  supabaseResponse.headers.set('x-pathname', request.nextUrl.pathname)
   return supabaseResponse
 }
 
